@@ -1,0 +1,110 @@
+<style>
+    label {
+        margin-bottom: -15px;
+    }
+
+    input {
+        margin-bottom: 10px;
+    }
+
+    .text-danger {
+        margin-top: -5px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<section>
+    <div class="container mt-4">
+        <h4 class="mb-4">Add New Tutor</h4>
+        <div class="card p-4 shadow">
+            <form id="tutorForm" action="/admin/add-tutor" method="post" class="input-container">
+
+                <label for="first name" class=" right-container__label">Your Full name</label>
+                <input type="text" class="form-control right-container__input" name="Tutorname" value="{{Tutorname}}"
+                    placeholder="Your Full Name" pattern="[A-Za-z]+" title="Only letters are allowed">
+                {{#if errors.tutorname}}<div class="text-danger">{{errors.tutorname}}</div>{{/if}}
+
+                <div class="row ">
+                    <div class="col-lg-6">
+                        <label for="email" class=" right-container__label">Email</label>
+                        <input type="text" class="form-control right-container__input" name="Email" value="{{Email}}"
+                            placeholder="Your Email">
+                        {{#if errors.email}}<div class="text-danger">{{errors.email}}</div>{{/if}}
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="phone" class=" right-container__label">Phone</label>
+                        <input type="text" class="form-control right-container__input" name="Phone" value="{{Phone}}"
+                            placeholder="Your Phone Number">
+                        {{#if errors.phone}}<div class="text-danger">{{errors.phone}}</div>{{/if}}
+                    </div>
+                </div>
+
+
+                <label for="address" class=" right-container__label">Your Address</label>
+                <textarea class="form-control right-container__input" name="Address"
+                    placeholder="Your Address">{{Address}}</textarea>
+                {{#if errors.address}}<div class="text-danger">{{errors.address}}</div>{{/if}}
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="city" class=" right-container__label">City</label>
+                        <input type="text" class="form-control right-container__input" name="City" value="{{City}}"
+                            placeholder="Your City Number">
+                        {{#if errors.city}}<div class="text-danger">{{errors.city}}</div>{{/if}}
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="pincode" class=" right-container__label">Pincode</label>
+                        <input type="number" class="form-control right-container__input" name="Pincode"
+                            value="{{Pincode}}" placeholder="Your Pincode Number">
+                        {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
+                    </div>
+                </div>
+
+
+                <label for="email" class="right-container__label">Password</label>
+                <input type="password" class="form-control right-container__input" name="Password" value="{{Password}}"
+                    type="password" placeholder="Enter Password">
+                {{#if errors.password}}<div class="text-danger">{{errors.password}}</div>{{/if}}
+
+                <button type="submit" class="btn btn-primary mt-2">Create</button>
+                <a href="/admin/all-tutors" class="btn btn-dark mt-2">Back</a>
+
+            </form>
+        </div>
+        <br><br>
+    </div>
+</section>
+
+
+<script>
+    // Get the form element
+    const form = document.getElementById('tutorForm');
+
+    // Handle form submission event
+    form.addEventListener('submit', function (event) {
+        // Prevent default form submission behavior
+        event.preventDefault();
+
+        // Collect form data
+        const tutorName = document.querySelector('input[name="Tutorname"]').value;
+        const email = document.querySelector('input[name="Email"]').value;
+        const phone = document.querySelector('input[name="Phone"]').value;
+        const password = document.querySelector('input[name="Password"]').value;
+
+        // Check if all required fields are filled (simple validation)
+        if (tutorName && email && phone && password) {
+            // First, submit the form via AJAX or manually
+            form.submit(); // This submits the form to the server
+
+            // Now, send the WhatsApp message after form submission
+            const message = `Hi ${tutorName}, your email is ${email} and your password is ${password}. You can log in with these details.`;
+            const encodedMessage = encodeURIComponent(message);
+            const waLink = `https://wa.me/${phone}?text=${encodedMessage}`;
+
+            // Open WhatsApp link
+            window.open(waLink, '_blank');
+        } else {
+            alert('Please fill all the required fields!');
+        }
+    });
+</script>
