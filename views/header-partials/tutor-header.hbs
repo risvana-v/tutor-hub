@@ -1,3 +1,16 @@
+<style>
+    .header {
+        --background-color: black !important;
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        color: var(--default-color);
+        background-color: var(--background-color);
+        padding: 20px 0;
+        transition: all 0.5s;
+        z-index: 997;
+    }
+</style>
+
 <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
@@ -9,10 +22,9 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="#hero" class="active">Home<br></a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="/tutor" class="active">Dashboard<br></a></li>
+                <li><a href="#!">Manage Students</a></li>
+                <li><a href="/tutor/subject/all-subjects">Manage Subjects</a></li>
 
                 {{#if tutor}}
                 <li class="dropdown"><a href="#"><span>{{tutor.Tutorname}} </span> <i

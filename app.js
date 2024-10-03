@@ -46,6 +46,8 @@ app.use("/", usersRouter);
 app.use("/admin", adminRouter);
 app.use("/admin/tutor", adminRouter);
 app.use("/tutor", tutorRouter);
+app.use("/tutor/subject", tutorRouter);
+
 
 
 // catch 404 and forward to error handler

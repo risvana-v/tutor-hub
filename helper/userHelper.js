@@ -10,6 +10,44 @@ var instance = new Razorpay({
 });
 
 module.exports = {
+
+  ///////GET ALL subject/////////////////////                                            
+  getAllsubjects: () => {
+    return new Promise(async (resolve, reject) => {
+      let subjects = await db
+        .get()
+        .collection(collections.SUBJECT_COLLECTION)
+        .find()
+        .toArray();
+      resolve(subjects);
+    });
+  },
+
+  getAllTutors: () => {
+    return new Promise(async (resolve, reject) => {
+      let tutors = await db
+        .get()
+        .collection(collections.TUTOR_COLLECTION)
+        .find()
+        .toArray();
+      resolve(tutors);
+    });
+  },
+
+  getTutorById: (tutorId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const tutor = await db.get()
+          .collection(collections.TUTOR_COLLECTION)
+          .findOne({ _id: objectId(tutorId) });
+        resolve(tutor);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await db
@@ -20,6 +58,48 @@ module.exports = {
       resolve(products);
     });
   },
+
+  getUserDetails: (userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.USERS_COLLECTION)
+        .findOne({ _id: objectId(userId) })
+        .then((user) => {
+          resolve(user);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+
+  updateUserProfile: (userId, userDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.USERS_COLLECTION)
+        .updateOne(
+          { _id: objectId(userId) },
+          {
+            $set: {
+              Fname: userDetails.Fname,
+              Lname: userDetails.Lname,
+              Email: userDetails.Email,
+              Phone: userDetails.Phone,
+              // Address: userDetails.Address,
+              // District: userDetails.District,
+              // Pincode: userDetails.Pincode,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+
 
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
@@ -383,8 +463,8 @@ module.exports = {
 
       hmac.update(
         details["payment[razorpay_order_id]"] +
-          "|" +
-          details["payment[razorpay_payment_id]"]
+        "|" +
+        details["payment[razorpay_payment_id]"]
       );
       hmac = hmac.digest("hex");
 
@@ -430,7 +510,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       db.get()
         .collection(collections.PRODUCTS_COLLECTION)
-        .createIndex({ Name : "text" }).then(async()=>{
+        .createIndex({ Name: "text" }).then(async () => {
           let result = await db
             .get()
             .collection(collections.PRODUCTS_COLLECTION)

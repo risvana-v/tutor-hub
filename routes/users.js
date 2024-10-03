@@ -21,10 +21,125 @@ router.get("/", async function (req, res, next) {
     let userId = req.session.user._id;
     cartCount = await userHelper.getCartCount(userId);
   }
-  userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user, cartCount });
-  });
+  let tutors = await userHelper.getAllTutors();
+  let subjects = await userHelper.getAllsubjects();
+
+  res.render("users/home", { admin: false, subjects, user, tutors, cartCount });
 });
+
+////////////////////PROFILE////////////////////////////////////
+router.get("/profile", async function (req, res, next) {
+  let user = req.session.user;
+  res.render("users/profile", { admin: false, user });
+});
+
+
+router.get("/single-tutor/:id", async function (req, res) {
+  let user = req.session.user;
+  const tutorId = req.params.id; // Get tutor ID from URL
+
+  try {
+    const tutor = await userHelper.getTutorById(tutorId); // Pass the tutor ID to the function
+    res.render("users/single-tutor", { admin: false, user, tutor });
+  } catch (error) {
+    console.error("Error fetching tutor:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+router.get("/edit-profile/:id", verifySignedIn, async function (req, res) {
+  let user = req.session.user;
+  let userId = req.session.user._id;
+  let userProfile = await userHelper.getUserDetails(userId);
+  res.render("users/edit-profile", { admin: false, userProfile, user });
+});
+
+router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
+  try {
+    const { Fname, Lname, Email, Phone,
+      // Address, District, Pincode 
+    } = req.body;
+    let errors = {};
+
+    // Validate first name
+    if (!Fname || Fname.trim().length === 0) {
+      errors.fname = 'Please enter your first name.';
+    }
+
+    // if (!District || District.trim().length === 0) {
+    //   errors.district = 'Please enter your first name.';
+    // }
+
+    // Validate last name
+    if (!Lname || Lname.trim().length === 0) {
+      errors.lname = 'Please enter your last name.';
+    }
+
+    // Validate email format
+    if (!Email || !/^\S+@\S+\.\S+$/.test(Email)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+
+    // Validate phone number
+    if (!Phone) {
+      errors.phone = "Please enter your phone number.";
+    } else if (!/^\d{10}$/.test(Phone)) {
+      errors.phone = "Phone number must be exactly 10 digits.";
+    }
+
+
+    // Validate pincode
+    // if (!Pincode) {
+    //   errors.pincode = "Please enter your pincode.";
+    // } else if (!/^\d{6}$/.test(Pincode)) {
+    //   errors.pincode = "Pincode must be exactly 6 digits.";
+    // }
+
+    if (!Fname) errors.fname = "Please enter your first name.";
+    if (!Lname) errors.lname = "Please enter your last name.";
+    if (!Email) errors.email = "Please enter your email.";
+    // if (!Address) errors.address = "Please enter your address.";
+    // if (!District) errors.district = "Please enter your district.";
+
+    // Validate other fields as needed...
+
+    // If there are validation errors, re-render the form with error messages
+    if (Object.keys(errors).length > 0) {
+      let userProfile = await userHelper.getUserDetails(req.params.id);
+      return res.render("users/edit-profile", {
+        admin: false,
+        userProfile,
+        user: req.session.user,
+        errors,
+        Fname,
+        Lname,
+        Email,
+        Phone,
+        // Address,
+        // District,
+        // Pincode,
+      });
+    }
+
+    // Update the user profile
+    await userHelper.updateUserProfile(req.params.id, req.body);
+
+    // Fetch the updated user profile and update the session
+    let updatedUserProfile = await userHelper.getUserDetails(req.params.id);
+    req.session.user = updatedUserProfile;
+
+    // Redirect to the profile page
+    res.redirect("/profile");
+  } catch (err) {
+    console.error("Profile update error:", err);
+    res.status(500).send("An error occurred while updating the profile.");
+  }
+});
+
+
+
+
 
 router.get("/signup", function (req, res) {
   if (req.session.signedIn) {
