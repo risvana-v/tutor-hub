@@ -11,15 +11,15 @@ var instance = new Razorpay({
 
 module.exports = {
 
-  ///////GET ALL subject/////////////////////                                            
-  getAllsubjects: () => {
+  ///////GET ALL product/////////////////////                                            
+  getAllproducts: () => {
     return new Promise(async (resolve, reject) => {
-      let subjects = await db
+      let products = await db
         .get()
-        .collection(collections.SUBJECT_COLLECTION)
+        .collection(collections.PRODUCTS_COLLECTION)
         .find()
         .toArray();
-      resolve(subjects);
+      resolve(products);
     });
   },
 
@@ -367,9 +367,9 @@ module.exports = {
       let status = order["payment-method"] === "COD" ? "placed" : "pending";
       let orderObject = {
         deliveryDetails: {
+          name: order.name,
+          email: order.email,
           mobile: order.mobile,
-          address: order.address,
-          pincode: order.pincode,
         },
         userId: objectId(order.userId),
         user: user,

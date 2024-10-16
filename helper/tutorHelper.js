@@ -5,105 +5,15 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
-  ///////ADD subject/////////////////////                                         
-  addsubject: (subject, tutorId, callback) => {
+  ///////ADD product/////////////////////                                         
+  addproduct: (product, tutorId, callback) => {
     if (!tutorId || !objectId.isValid(tutorId)) {
       return callback(null, new Error("Invalid or missing tutorId"));
     }
-    console.log(subject);
-    subject.Price = parseInt(subject.Price);
-    subject.tutorId = objectId(tutorId); // Associate workspace with the builder
-
-    db.get()
-      .collection(collections.SUBJECT_COLLECTION)
-      .insertOne(subject)
-      .then((data) => {
-        console.log(data);
-        callback(data.ops[0]._id);
-      });
-  },
-
-  ///////GET ALL subject/////////////////////                                            
-  getAllsubjects: (tutorId) => {
-    return new Promise(async (resolve, reject) => {
-      let subjects = await db
-        .get()
-        .collection(collections.SUBJECT_COLLECTION)
-        .find({ tutorId: objectId(tutorId) }) // Filter by builderId
-        .toArray();
-      resolve(subjects);
-    });
-  },
-
-  ///////ADD subject DETAILS/////////////////////                                            
-  getsubjectDetails: (subjectId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.SUBJECT_COLLECTION)
-        .findOne({
-          _id: objectId(subjectId)
-        })
-        .then((response) => {
-          resolve(response);
-        });
-    });
-  },
-
-  ///////DELETE subject/////////////////////                                            
-  deletesubject: (subjectId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.SUBJECT_COLLECTION)
-        .removeOne({
-          _id: objectId(subjectId)
-        })
-        .then((response) => {
-          console.log(response);
-          resolve(response);
-        });
-    });
-  },
-
-  ///////UPDATE subject/////////////////////                                            
-  updatesubject: (subjectId, subjectDetails) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.SUBJECT_COLLECTION)
-        .updateOne(
-          {
-            _id: objectId(subjectId)
-          },
-          {
-            $set: {
-              name: subjectDetails.name,
-              desc: subjectDetails.desc,
-              Price: subjectDetails.Price,
-            },
-          }
-        )
-        .then((response) => {
-          resolve();
-        });
-    });
-  },
-
-
-  ///////DELETE ALL subject/////////////////////                                            
-  deleteAllsubjects: () => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.SUBJECT_COLLECTION)
-        .remove({})
-        .then(() => {
-          resolve();
-        });
-    });
-  },
-
-
-  addProduct: (product, callback) => {
     console.log(product);
     product.Price = parseInt(product.Price);
+    product.tutorId = objectId(tutorId); // Associate workspace with the builder
+
     db.get()
       .collection(collections.PRODUCTS_COLLECTION)
       .insertOne(product)
@@ -113,56 +23,146 @@ module.exports = {
       });
   },
 
-  getAllProducts: () => {
+  ///////GET ALL product/////////////////////                                            
+  getAllproducts: (tutorId) => {
     return new Promise(async (resolve, reject) => {
       let products = await db
         .get()
         .collection(collections.PRODUCTS_COLLECTION)
-        .find()
+        .find({ tutorId: objectId(tutorId) }) // Filter by builderId
         .toArray();
       resolve(products);
     });
   },
 
-  getTutorDetails: (tutorId) => {
+  ///////ADD product DETAILS/////////////////////                                            
+  getproductDetails: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.TUTOR_COLLECTION)
-        .findOne({ _id: objectId(tutorId) })
-        .then((tutor) => {
-          resolve(tutor);
+        .collection(collections.PRODUCTS_COLLECTION)
+        .findOne({
+          _id: objectId(productId)
         })
-        .catch((err) => {
-          reject(err);
+        .then((response) => {
+          resolve(response);
         });
     });
   },
 
-  updateTutorProfile: (tutorId, tutorDetails) => {
+  ///////DELETE product/////////////////////                                            
+  deleteproduct: (productId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.TUTOR_COLLECTION)
+        .collection(collections.PRODUCTS_COLLECTION)
+        .removeOne({
+          _id: objectId(productId)
+        })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
+  ///////UPDATE product/////////////////////                                            
+  updateproduct: (productId, productDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.PRODUCTS_COLLECTION)
         .updateOne(
-          { _id: objectId(tutorId) },
+          {
+            _id: objectId(productId)
+          },
           {
             $set: {
-              Tutorname: tutorDetails.Tutorname,
-              Email: tutorDetails.Email,
-              Phone: tutorDetails.Phone,
-              Address: tutorDetails.Address,
-              City: tutorDetails.City,
-              Pincode: tutorDetails.Pincode,
+              name: productDetails.name,
+              desc: productDetails.desc,
+              Price: productDetails.Price,
             },
           }
         )
         .then((response) => {
           resolve();
-        })
-        .catch((err) => {
-          reject(err);
         });
     });
   },
+
+
+  ///////DELETE ALL product/////////////////////                                            
+  deleteAllproducts: () => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.PRODUCTS_COLLECTION)
+        .remove({})
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
+
+  // addProduct: (product, callback) => {
+  //   console.log(product);
+  //   product.Price = parseInt(product.Price);
+  //   db.get()
+  //     .collection(collections.PRODUCTS_COLLECTION)
+  //     .insertOne(product)
+  //     .then((data) => {
+  //       console.log(data);
+  //       callback(data.ops[0]._id);
+  //     });
+  // },
+
+  // getAllProducts: () => {
+  //   return new Promise(async (resolve, reject) => {
+  //     let products = await db
+  //       .get()
+  //       .collection(collections.PRODUCTS_COLLECTION)
+  //       .find()
+  //       .toArray();
+  //     resolve(products);
+  //   });
+  // },
+
+  // getTutorDetails: (tutorId) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.get()
+  //       .collection(collections.TUTOR_COLLECTION)
+  //       .findOne({ _id: objectId(tutorId) })
+  //       .then((tutor) => {
+  //         resolve(tutor);
+  //       })
+  //       .catch((err) => {
+  //         reject(err);
+  //       });
+  //   });
+  // },
+
+  // updateTutorProfile: (tutorId, tutorDetails) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.get()
+  //       .collection(collections.TUTOR_COLLECTION)
+  //       .updateOne(
+  //         { _id: objectId(tutorId) },
+  //         {
+  //           $set: {
+  //             Tutorname: tutorDetails.Tutorname,
+  //             Email: tutorDetails.Email,
+  //             Phone: tutorDetails.Phone,
+  //             Address: tutorDetails.Address,
+  //             City: tutorDetails.City,
+  //             Pincode: tutorDetails.Pincode,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         resolve();
+  //       })
+  //       .catch((err) => {
+  //         reject(err);
+  //       });
+  //   });
+  // },
 
 
   doSignup: (tutorData) => {
@@ -204,60 +204,60 @@ module.exports = {
     });
   },
 
-  getProductDetails: (productId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
-        .findOne({ _id: objectId(productId) })
-        .then((response) => {
-          resolve(response);
-        });
-    });
-  },
+  // getProductDetails: (productId) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.get()
+  //       .collection(collections.PRODUCTS_COLLECTION)
+  //       .findOne({ _id: objectId(productId) })
+  //       .then((response) => {
+  //         resolve(response);
+  //       });
+  //   });
+  // },
 
-  deleteProduct: (productId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
-        .removeOne({ _id: objectId(productId) })
-        .then((response) => {
-          console.log(response);
-          resolve(response);
-        });
-    });
-  },
+  // deleteProduct: (productId) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.get()
+  //       .collection(collections.PRODUCTS_COLLECTION)
+  //       .removeOne({ _id: objectId(productId) })
+  //       .then((response) => {
+  //         console.log(response);
+  //         resolve(response);
+  //       });
+  //   });
+  // },
 
-  updateProduct: (productId, productDetails) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
-        .updateOne(
-          { _id: objectId(productId) },
-          {
-            $set: {
-              Name: productDetails.Name,
-              Category: productDetails.Category,
-              Price: productDetails.Price,
-              Description: productDetails.Description,
-            },
-          }
-        )
-        .then((response) => {
-          resolve();
-        });
-    });
-  },
+  // updateProduct: (productId, productDetails) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.get()
+  //       .collection(collections.PRODUCTS_COLLECTION)
+  //       .updateOne(
+  //         { _id: objectId(productId) },
+  //         {
+  //           $set: {
+  //             Name: productDetails.Name,
+  //             Category: productDetails.Category,
+  //             Price: productDetails.Price,
+  //             Description: productDetails.Description,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         resolve();
+  //       });
+  //   });
+  // },
 
-  deleteAllProducts: () => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.PRODUCTS_COLLECTION)
-        .remove({})
-        .then(() => {
-          resolve();
-        });
-    });
-  },
+  // deleteAllProducts: () => {
+  //   return new Promise((resolve, reject) => {
+  //     db.get()
+  //       .collection(collections.PRODUCTS_COLLECTION)
+  //       .remove({})
+  //       .then(() => {
+  //         resolve();
+  //       });
+  //   });
+  // },
 
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {

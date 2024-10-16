@@ -223,6 +223,14 @@ router.get("/delete-product/:id", verifySignedIn, function (req, res) {
   });
 });
 
+
+router.get("/delete-tutor/:id", verifySignedIn, function (req, res) {
+  let tutorId = req.params.id;
+  adminHelper.deleteTutor(tutorId).then((response) => {
+    res.redirect("/admin/all-tutors");
+  });
+});
+
 router.get("/delete-all-products", verifySignedIn, function (req, res) {
   adminHelper.deleteAllProducts().then(() => {
     res.redirect("/admin/all-products");

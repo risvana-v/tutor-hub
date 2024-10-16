@@ -2,13 +2,13 @@
     {{#if cartProducts}}
     <div class="container my-5">
         <div class="table-responsive">
-            <table class="table" id="table">
+            <table class="table table-bordered" id="table">
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">Item</th>
                         <th scope="col">Title</th>
                         <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
+                        {{!-- <th scope="col">Quantity</th> --}}
                         <th scope="col">Remove</th>
                     </tr>
                 </thead>
@@ -17,16 +17,16 @@
                     {{#each cartProducts}}
                     <tr class="align-middle">
                         <td><img style="width: 70px; height: 70px;"
-                                src="/images/product-images/{{this.product._id}}.png" alt=""></td>
-                        <td>{{this.product.Name}}</td>
+                                src="/images/subject-images/{{this.product._id}}.png" alt=""></td>
+                        <td>{{this.product.name}}</td>
                         <td>₹{{this.product.Price}}</td>
-                        <td>
+                        {{!-- <td>
                             <button class="cart-item-count btn btn-secondary btn-sm me-2"
                                 onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)">-</button>
                             <span id="{{this.product._id}}">{{this.quantity}}</span>
                             <button class="cart-item-count btn btn-secondary btn-sm ms-2"
                                 onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button>
-                        </td>
+                        </td> --}}
                         <td><button class="btn btn-danger"
                                 onclick="removeCartProduct('{{this._id}}','{{this.product._id}}','{{this.quantity}}')">Remove</button>
                         </td>

@@ -17,6 +17,18 @@ module.exports = {
   },
 
 
+  deleteTutor: (tutorId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.TUTOR_COLLECTION)
+        .removeOne({ _id: objectId(tutorId) })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
 
   addProduct: (product, callback) => {
     console.log(product);

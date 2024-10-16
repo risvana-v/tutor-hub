@@ -2,32 +2,31 @@
     <div class="container mt-5">
         <form id="checkout-form">
             <div class="row">
-                <div class="col-md-6">
-                    <h2>Enter Shipping details</h2><br>
-                    <div>
-                        <label for="">Address</label>
-
-                        <input type="text" name="address" id="address" class="form-control">
-                        <label for="">Pincode</label>
-                        <input type="text" name="pincode" id="pincode" class="form-control">
+                <div class="col-md-6 ">
+                    <h2>Enter Purchase details</h2><br>
+                    <div class="card shadow p-4">
+                        <label for="">Name</label>
+                        <input type="text" name="name" id="name" value={{user.Fname}} class="form-control"><br>
+                        <label for="">Email</label>
+                        <input type="text" name="email" id="email" value={{user.Email}} class="form-control"><br>
                         <label for="">Mobile number</label>
-                        <input type="text" name="mobile" id="mobile" class="form-control">
+                        <input type="text" name="mobile" id="mobile" value={{user.Phone}} class="form-control">
                         <input type="text" name="userId" value="{{user._id}}" hidden>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="container mt-5 ml-5 checkout">
-                        <h5 class="mt-4">Total amount: Rs. {{total}}</h5>
-                        <hr>
+                <div class="col-md-6">
+                    <div class="container mt-5 ml-5 card shadow p-3">
+                        <h5 class="mt-4">Total amount: Rs. {{total}}/-</h5>
                         <div class="payment">
-                            <p>Payment Method</p>
-                            <label class="radio-inline">
-                                <input type="radio" name="payment-method" value="COD" checked> COD
+                            {{!-- <p>Payment Method</p> --}}
+                            {{!-- <label class="radio-inline">
+                                <input type="radio" name="payment-method" value="COD"> COD
+                            </label> --}}
+                            <label class="radio-inline ">
+                                <input type="hidden" name="payment-method" value="ONLINE" checked>
                             </label>
-                            <label class="radio-inline mt-2">
-                                <input type="radio" name="payment-method" value="ONLINE"> Online payment
-                            </label>
-                            <button class="btn btn-primary float-right mt-4" type="submit">Checkout</button>
+                            <button class="btn btn-primary float-right mt-2 w-100" type="submit">Pay
+                                {{total}}/-</button>
                         </div>
                     </div>
                 </div>
@@ -108,7 +107,7 @@
             success: (response) => {
                 if (response.status) {
                     location.href = '/order-placed'
-                } else{
+                } else {
                     alert("Payment failed")
                 }
             }
