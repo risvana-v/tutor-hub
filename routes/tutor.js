@@ -2,6 +2,9 @@ var express = require("express");
 var tutorHelper = require("../helper/tutorHelper");
 var router = express.Router();
 var fs = require("fs");
+var adminHelper = require("../helper/adminHelper");
+var userHelper = require("../helper/userHelper");
+
 
 var db = require("../config/connection");
 var collections = require("../config/collections");
@@ -16,24 +19,70 @@ const verifySignedIn = (req, res, next) => {
 };
 
 /* GET home page. */
-router.get("/", async function (req, res, next) {
+router.get("/", verifySignedIn, async function (req, res, next) {
   let tutor = req.session.tutor;
 
-  tutorHelper.getAllsubjects().then((subjects) => {
-    res.render("tutor/home", { admin: false, subjects, tutor });
+  tutorHelper.getAllproducts().then((products) => {
+    res.render("tutor/home", { admin: false, products, tutor });
   });
 });
 
 
-///////ALL subject/////////////////////                                         
+router.get("/all-orders", verifySignedIn, async function (req, res) {
+  let tutor = req.session.tutor;
+  let orders = await adminHelper.getAllOrders();
+  res.render("tutor/all-orders", {
+    admin: false,
+    tutor,
+    orders,
+  });
+});
+
+router.get(
+  "/view-ordered-products/:id",
+  verifySignedIn,
+  async function (req, res) {
+    let tutor = req.session.tutor;
+    let orderId = req.params.id;
+    let products = await userHelper.getOrderProducts(orderId);
+    res.render("tutor/order-products", {
+      admin: false,
+      tutor,
+      products,
+    });
+  }
+);
+
+router.get("/change-status/", verifySignedIn, function (req, res) {
+  let status = req.query.status;
+  let orderId = req.query.orderId;
+  adminHelper.changeStatus(status, orderId).then(() => {
+    res.redirect("/tutor/all-orders");
+  });
+});
+
+router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
+  let orderId = req.params.id;
+  adminHelper.cancelOrder(orderId).then(() => {
+    res.redirect("/tutor/all-orders");
+  });
+});
+
+router.get("/cancel-all-orders", verifySignedIn, function (req, res) {
+  adminHelper.cancelAllOrders().then(() => {
+    res.redirect("/admin/all-orders");
+  });
+});
+
+///////ALL product/////////////////////                                         
 router.get("/all-subjects", verifySignedIn, function (req, res) {
   let tutor = req.session.tutor;
-  tutorHelper.getAllsubjects(req.session.tutor._id).then((subjects) => {
-    res.render("tutor/subject/all-subjects", { admin: false, subjects, tutor });
+  tutorHelper.getAllproducts(req.session.tutor._id).then((products) => {
+    res.render("tutor/subject/all-subjects", { admin: false, products, tutor });
   });
 });
 
-///////ADD subject/////////////////////                                         
+///////ADD product/////////////////////                                         
 router.get("/add-subject", verifySignedIn, function (req, res) {
   let tutor = req.session.tutor;
   res.render("tutor/subject/add-subject", { admin: false, tutor });
@@ -45,18 +94,18 @@ router.post("/add-subject", function (req, res) {
   if (req.session.signedIntutor && req.session.tutor && req.session.tutor._id) {
     const tutorId = req.session.tutor._id; // Get the tutor's ID from the session
     // Pass the tutorId to the addsub function
-    tutorHelper.addsubject(req.body, tutorId, (subjectId, error) => {
+    tutorHelper.addproduct(req.body, tutorId, (productId, error) => {
       if (error) {
-        console.log("Error adding subject:", error);
-        res.status(500).send("Failed to add subject");
+        console.log("Error adding product:", error);
+        res.status(500).send("Failed to add product");
       } else {
         let image = req.files.Image;
-        image.mv("./public/images/subject-images/" + subjectId + ".png", (err) => {
+        image.mv("./public/images/subject-images/" + productId + ".png", (err) => {
           if (!err) {
             res.redirect("/tutor/subject/all-subjects");
           } else {
-            console.log("Error saving subject image:", err);
-            res.status(500).send("Failed to save subject image");
+            console.log("Error saving product image:", err);
+            res.status(500).send("Failed to save product image");
           }
         });
       }
@@ -68,41 +117,41 @@ router.post("/add-subject", function (req, res) {
 });
 
 
-///////EDIT subject/////////////////////                                         
+///////EDIT product/////////////////////                                         
 router.get("/edit-subject/:id", verifySignedIn, async function (req, res) {
   let tutor = req.session.tutor;
-  let subjectId = req.params.id;
-  let subject = await tutorHelper.getsubjectDetails(subjectId);
-  console.log(subject);
-  res.render("tutor/subject/edit-subject", { admin: false, subject, tutor });
+  let productId = req.params.id;
+  let product = await tutorHelper.getproductDetails(productId);
+  console.log(product);
+  res.render("tutor/subject/edit-subject", { admin: false, product, tutor });
 });
 
-///////EDIT subject/////////////////////                                         
+///////EDIT product/////////////////////                                         
 router.post("/edit-subject/:id", verifySignedIn, function (req, res) {
-  let subjectId = req.params.id;
-  tutorHelper.updatesubject(subjectId, req.body).then(() => {
+  let productId = req.params.id;
+  tutorHelper.updateproduct(productId, req.body).then(() => {
     if (req.files) {
       let image = req.files.Image;
       if (image) {
-        image.mv("./public/images/subject-images/" + subjectId + ".png");
+        image.mv("./public/images/subject-images/" + productId + ".png");
       }
     }
     res.redirect("/tutor/subject/all-subjects");
   });
 });
 
-///////DELETE subject/////////////////////                                         
+///////DELETE product/////////////////////                                         
 router.get("/delete-subject/:id", verifySignedIn, function (req, res) {
-  let subjectId = req.params.id;
-  tutorHelper.deletesubject(subjectId).then((response) => {
-    fs.unlinkSync("./public/images/subject-images/" + subjectId + ".png");
+  let productId = req.params.id;
+  tutorHelper.deleteproduct(productId).then((response) => {
+    fs.unlinkSync("./public/images/subject-images/" + productId + ".png");
     res.redirect("/tutor/subject/all-subjects");
   });
 });
 
-///////DELETE ALL subject/////////////////////                                         
+///////DELETE ALL product/////////////////////                                         
 router.get("/delete-all-subjects", verifySignedIn, function (req, res) {
-  tutorHelper.deleteAllsubjects().then(() => {
+  tutorHelper.deleteAllproducts().then(() => {
     res.redirect("/tutor/subject/all-subjects");
   });
 });

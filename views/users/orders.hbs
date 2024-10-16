@@ -6,9 +6,6 @@
                 <thead class="table-dark">
                     <tr class="align-middle">
                         <th scope="col">Date</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Pincode</th>
-                        <th scope="col">Mobile</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Payment</th>
                         <th scope="col">Status</th>
@@ -21,10 +18,8 @@
                     {{#each orders}}
                     <tr class="align-middle">
                         <td>{{this.orderObject.date}}</td>
-                        <td>{{this.orderObject.deliveryDetails.address}}</td>
-                        <td>{{this.orderObject.deliveryDetails.pincode}}</td>
-                        <td>{{this.orderObject.deliveryDetails.mobile}}</td>
-                        <td>{{this.orderObject.totalAmount}}</td>
+
+                        <td>{{this.orderObject.totalAmount}}/-</td>
                         <td>{{this.orderObject.paymentMethod}}</td>
                         <td>{{this.orderObject.status}}</td>
                         <td>
@@ -33,7 +28,7 @@
                                 class="btn btn-danger">Cancel</a>
                         </td>
                         <td>
-                            <a href="/view-ordered-products/{{this._id}}" class="btn btn-primary">View Product</a>
+                            <a href="/view-ordered-products/{{this._id}}" class="btn btn-primary">View Course</a>
                         </td>
                     </tr>
                     {{/each}}

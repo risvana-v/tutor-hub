@@ -22,9 +22,9 @@ router.get("/", async function (req, res, next) {
     cartCount = await userHelper.getCartCount(userId);
   }
   let tutors = await userHelper.getAllTutors();
-  let subjects = await userHelper.getAllsubjects();
+  let products = await userHelper.getAllproducts();
 
-  res.render("users/home", { admin: false, subjects, user, tutors, cartCount });
+  res.render("users/home", { admin: false, products, user, tutors, cartCount });
 });
 
 ////////////////////PROFILE////////////////////////////////////
@@ -359,9 +359,11 @@ router.get("/order-placed", verifySignedIn, async (req, res) => {
 router.get("/orders", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
+  let orderId = req.params.id;
   let cartCount = await userHelper.getCartCount(userId);
   let orders = await userHelper.getUserOrder(userId);
-  res.render("users/orders", { admin: false, user, cartCount, orders });
+  let products = await userHelper.getOrderProducts(orderId);
+  res.render("users/orders", { admin: false, user, cartCount, orders, products });
 });
 
 router.get(

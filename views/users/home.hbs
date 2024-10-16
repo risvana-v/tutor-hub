@@ -134,7 +134,7 @@
         </div>
         <div class="row g-3 ">
             <!-- Single Top Product Card -->
-            {{#each subjects}}
+            {{#each products}}
             <div class="col-6 col-sm-4 col-lg-4">
                 {{!-- <a href="/single-workspace/{{this._id}}"> --}}
                     <a href="#!">
@@ -144,11 +144,15 @@
                                 <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
                                         src="/images/subject-images/{{this._id}}.png" alt="">
                                     <!-- Badge --></a>
-                                <!-- Product Title --><a class="product-title d-block text-truncate"
-                                    href="#!">{{this.name}}</a>
+                                <!-- Product Title -->
+                                <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
                                 <!-- Product Price -->
                                 <p class="sale-price">Rs.{{this.Price}} </p>
+                                <hr>
                                 <p>Provided By : {{this.tutorname}}</p>
+                                <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                                    class="btn btn-sm btn-dark">Add
+                                    to cart</button>
                                 {{!-- <a href="/single-workspace/{{this._id}}"
                                     class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
                                     Details</a>
@@ -898,7 +902,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="subject" placeholder="Subject"
+                                <input type="text" class="form-control" name="product" placeholder="Product"
                                     required="">
                             </div>
 
@@ -1003,3 +1007,26 @@
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
+
+<script>
+    function addToCart(productId) {
+        $.ajax({
+            url: "/add-to-cart/" + productId,
+            method: "get",
+            success: (response) => {
+                if (response.status) {
+                    // Update cart count
+                    let count = $("#cart-count").html();
+                    count = parseInt(count) + 1;
+                    $("#cart-count").html(count);
+
+                    // Change button text and style
+                    let button = $("#add-to-cart-" + productId);
+                    button.html("Added to cart ✅");
+                    button.removeClass("btn-dark").addClass("btn-success");
+                    button.prop("disabled", true); // Optional: Disable the button after adding to cart
+                }
+            },
+        });
+    }
+</script>

@@ -39,7 +39,9 @@
                             <td>{{this.Address}}</td>
                             <td>{{this.City}}</td>
                             <td>{{this.Pincode}}</td>
-                            <td><a href="" class="btn btn-danger">Delete</a></td>
+                            <td><a href="/admin/delete-tutor/{{this._id}}" class="btn btn-danger"
+                                    onclick="return confirm('Are You Sure to Delete {{this.Tutorname}} ?')">Delete</a>
+                            </td>
                         </tr>
                         {{/each}}
                     </tbody>

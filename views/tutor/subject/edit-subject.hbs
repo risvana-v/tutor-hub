@@ -11,7 +11,7 @@
 <div class="page-container">
     <div class="container-md">
         <h4 class="mt-3 mb-3">Edit Subject</h4>
-        <form action="/tutor/edit-subject/{{subject._id}}" enctype="multipart/form-data" method="POST">
+        <form action="/tutor/edit-subject/{{product._id}}" enctype="multipart/form-data" method="POST">
             <input type="hidden" name="date" id="datetime">
             <div class="row">
                 <div class="col-lg-6">
@@ -19,13 +19,13 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label class="form-label" for="exampleInputText">Subject Name</label>
-                                <input class="form-control" id="exampleInputText" value="{{subject.name}}" name="name"
+                                <input class="form-control" id="exampleInputText" value="{{product.name}}" name="name"
                                     type="text" placeholder="" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="exampleInputText">Subject Price</label>
-                                <input class="form-control" id="exampleInputText" value="{{subject.Price}}" name="Price"
+                                <input class="form-control" id="exampleInputText" value="{{product.Price}}" name="Price"
                                     type="number" placeholder="" required>
                             </div>
 
@@ -33,7 +33,7 @@
                             <div class="form-group">
                                 <label class="form-label" for="exampleInputText">Desciption</label>
                                 <textarea class="form-control" id="exampleInputText" name="desc" type="text"
-                                    placeholder="" required>{{subject.desc}}</textarea>
+                                    placeholder="" required>{{product.desc}}</textarea>
                             </div>
 
 
@@ -55,7 +55,7 @@
                                 <input class="form-control" id="exampleInputText" name="Image" accept="image/*"
                                     type="file" onchange="viewImage(event)">
                             </div>
-                            <img src="/images/subject-images/{{subject._id}}.png" alt=""
+                            <img src="/images/subject-images/{{product._id}}.png" alt=""
                                 style="width: 5rem; margin-bottom: 8px;" id="imgView">
 
                         </div>
