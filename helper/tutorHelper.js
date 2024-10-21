@@ -124,45 +124,45 @@ module.exports = {
   //   });
   // },
 
-  // getTutorDetails: (tutorId) => {
-  //   return new Promise((resolve, reject) => {
-  //     db.get()
-  //       .collection(collections.TUTOR_COLLECTION)
-  //       .findOne({ _id: objectId(tutorId) })
-  //       .then((tutor) => {
-  //         resolve(tutor);
-  //       })
-  //       .catch((err) => {
-  //         reject(err);
-  //       });
-  //   });
-  // },
+  getTutorDetails: (tutorId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.TUTOR_COLLECTION)
+        .findOne({ _id: objectId(tutorId) })
+        .then((tutor) => {
+          resolve(tutor);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
 
-  // updateTutorProfile: (tutorId, tutorDetails) => {
-  //   return new Promise((resolve, reject) => {
-  //     db.get()
-  //       .collection(collections.TUTOR_COLLECTION)
-  //       .updateOne(
-  //         { _id: objectId(tutorId) },
-  //         {
-  //           $set: {
-  //             Tutorname: tutorDetails.Tutorname,
-  //             Email: tutorDetails.Email,
-  //             Phone: tutorDetails.Phone,
-  //             Address: tutorDetails.Address,
-  //             City: tutorDetails.City,
-  //             Pincode: tutorDetails.Pincode,
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         resolve();
-  //       })
-  //       .catch((err) => {
-  //         reject(err);
-  //       });
-  //   });
-  // },
+  updateTutorProfile: (tutorId, tutorDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.TUTOR_COLLECTION)
+        .updateOne(
+          { _id: objectId(tutorId) },
+          {
+            $set: {
+              Tutorname: tutorDetails.Tutorname,
+              Email: tutorDetails.Email,
+              Phone: tutorDetails.Phone,
+              Address: tutorDetails.Address,
+              City: tutorDetails.City,
+              Pincode: tutorDetails.Pincode,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
 
 
   doSignup: (tutorData) => {
