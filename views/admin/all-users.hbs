@@ -35,7 +35,9 @@
                             <td>{{this.Email}}</td>
                             <td>{{this.Phone}}</td>
 
-                            <td><a href="" class="btn btn-danger">Delete</a></td>
+                            <td><a href="/admin/remove-user/{{this._id}}" class="btn btn-danger"
+                                    onclick="return confirm('Are You Sure to Delete {{this.Fname}} ?')">Delete</a>
+                            </td>
                         </tr>
                         {{/each}}
                     </tbody>
