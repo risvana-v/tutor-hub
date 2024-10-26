@@ -39,9 +39,29 @@
                             <td>{{this.Address}}</td>
                             <td>{{this.City}}</td>
                             <td>{{this.Pincode}}</td>
-                            <td><a href="/admin/delete-tutor/{{this._id}}" class="btn btn-danger"
-                                    onclick="return confirm('Are You Sure to Delete {{this.Tutorname}} ?')">Delete</a>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    {{#if this.approved}}
+                                    <span class="badge bg-success p-2">Approved</span>
+                                    {{else if this.rejected}}
+                                    <span class="badge bg-danger p-2">Rejected</span>
+                                    {{else}}
+                                    <form action="/admin/approve-tutor/{{this._id}}" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm"><i
+                                                class="bi bi-check2"></i></button>
+                                    </form>
+                                    <form action="/admin/reject-tutor/{{this._id}}" method="POST">
+                                        <button type="submit" class="btn btn-dark btn-sm"><i
+                                                class="bi bi-ban"></i></button>
+                                    </form>
+                                    {{/if}}
+                                    <form action="/admin/delete-tutor/{{this._id}}" method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i
+                                                class="bi bi-trash"></i></button>
+                                    </form>
+                                </div>
                             </td>
+
                         </tr>
                         {{/each}}
                     </tbody>

@@ -36,6 +36,30 @@ router.get("/all-tutors", verifySignedIn, function (req, res) {
   });
 });
 
+
+router.post("/approve-tutor/:id", verifySignedIn, async function (req, res) {
+  await db.get().collection(collections.TUTOR_COLLECTION).updateOne(
+    { _id: ObjectId(req.params.id) },
+    { $set: { approved: true } }
+  );
+  res.redirect("/admin/all-tutors");
+});
+
+router.post("/reject-tutor/:id", function (req, res) {
+  const tutorId = req.params.id;
+  db.get()
+    .collection(collections.TUTOR_COLLECTION)
+    .updateOne({ _id: ObjectId(tutorId) }, { $set: { approved: false, rejected: true } })
+    .then(() => {
+      res.redirect("/admin/all-tutors");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.redirect("/admin/all-tutors");
+    });
+});
+
+
 router.get("/add-tutor", verifySignedIn, function (req, res) {
   let administator = req.session.admin;
   res.render("admin/add-tutor", { admin: true, administator, layout: 'admin' });

@@ -153,6 +153,22 @@
     input::placeholder {
         color: white !important;
     }
+
+    select {
+        border-radius: 10px !important;
+        background-color: rgb(24, 24, 24) !important;
+        color: white !important;
+        padding: 10px !important;
+        margin-bottom: 1px !important;
+    }
+
+    label {
+        margin-bottom: 5px;
+    }
+
+    select::placeholder {
+        color: white !important;
+    }
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -163,7 +179,8 @@
 </div>
 <div class="right-container">
     <div class="right-container__box">
-        <div class="right-container-box mb-4 mt-5">
+        <div class="right-container-box mb-4 mt-5"><br><br><br><br>
+
             <h2 class="text-white right-container__h2">Hey Dear Student!</h2>
             <p class="right-container__p">Enter your email and password to sign in</p>
         </div>
@@ -192,10 +209,28 @@
                 placeholder="Your Phone Number">
             {{#if errors.phone}}<div class="text-danger">{{errors.phone}}</div>{{/if}}
 
+            <label for="age" class=" right-container__label">Age</label>
+            <input type="text" class="form-control right-container__input" name="Age" value="{{Age}}"
+                placeholder="Your Age">
+            {{#if errors.age}}<div class="text-danger">{{errors.age}}</div>{{/if}}
+
+            <label for="age" class=" right-container__label">Your Class</label>
+            <select class="form-select" name="class" aria-label="Default select example">
+                <option selected>Select your class</option>
+                <option value="8-10">8-10th</option>
+                <option value="+1+2">+1/+2</option>
+                <option value="Degree-ro-pg">Degree/PG</option>
+            </select>
+
             <label for="email" class="right-container__label">Password</label>
             <input type="password" class="form-control right-container__input" name="Password" value="{{Password}}"
                 type="password" placeholder="Enter Password">
             {{#if errors.password}}<div class="text-danger">{{errors.password}}</div>{{/if}}
+
+            <label for="email" class="right-container__label">Profile Picture</label>
+            <input type="file" class="form-control right-container__input" name="profile" value="{{Image}}" type="image"
+                placeholder="Enter Image">
+            {{#if errors.image}}<div class="text-danger">{{errors.image}}</div>{{/if}}
 
             <button type="submit" class="btn mt-2 w-100">SIGN UP</button>
 

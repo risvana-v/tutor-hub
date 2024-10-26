@@ -38,6 +38,10 @@
                 <h4 class="mb-5 text-left">My Profile</h4>
                 {{#if user}}
                 <form action="#!" method="">
+                    <div class="form-group">
+                        <label>Profile Picture</label><br>
+                        <img src="/images/user-profile-images/{{user._id}}.png" width="100px">
+                    </div>
                     <div class="row g-1">
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -61,6 +65,17 @@
                         <label>Phone Number</label>
 
                         <input class="form-control" type="number" name="Phone" value={{user.Phone}} readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Age</label>
+
+                        <input class="form-control" type="text" name="age" value={{user.age}} readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Class</label>
+
+                        <input class="form-control" type="text" name="class" value={{user.class}} readonly>
                     </div>
                     {{!-- <div class="form-group">
                         <label>Address</label>

@@ -31,6 +31,15 @@
             <div class="register-form mt-4">
                 <h4 class="mb-5 text-left">Edit Your Profile</h4>
                 <form action="/edit-profile/{{userProfile._id}}" method="POST" enctype="multipart/form-data">
+
+                    <div class="form-group">
+                        <label>Profile Picture</label>
+                        <input class="form-control" type="file" id="profile" name="profile"
+                            value="{{tutorProfile.profile}}" required>
+                        {{!-- {{#if errors.phone}}
+                        <small class="text-danger">{{errors.phone}}</small>
+                        {{/if}} --}}
+                    </div>
                     <div class="row g-1">
                         <div class="col-lg-6">
                             <div class="form-group">

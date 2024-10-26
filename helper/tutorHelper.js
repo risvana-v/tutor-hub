@@ -12,7 +12,7 @@ module.exports = {
     }
     console.log(product);
     product.Price = parseInt(product.Price);
-    product.tutorId = objectId(tutorId); // Associate workspace with the builder
+    product.tutorId = objectId(tutorId); // Associate workspace with the tutor
 
     db.get()
       .collection(collections.PRODUCTS_COLLECTION)
@@ -29,7 +29,7 @@ module.exports = {
       let products = await db
         .get()
         .collection(collections.PRODUCTS_COLLECTION)
-        .find({ tutorId: objectId(tutorId) }) // Filter by builderId
+        .find({ tutorId: objectId(tutorId) }) // Filter by tutorId
         .toArray();
       resolve(products);
     });
@@ -152,6 +152,8 @@ module.exports = {
               Address: tutorDetails.Address,
               City: tutorDetails.City,
               Pincode: tutorDetails.Pincode,
+              qualifications: tutorDetails.qualifications,
+
             },
           }
         )
@@ -165,15 +167,16 @@ module.exports = {
   },
 
 
-  doSignup: (tutorData) => {
+  dosignup: (tutorData) => {
     return new Promise(async (resolve, reject) => {
-      tutorData.Password = await bcrypt.hash(tutorData.Password, 10);
-      db.get()
-        .collection(collections.TUTOR_COLLECTION)
-        .insertOne(tutorData)
-        .then((data) => {
-          resolve(data.ops[0]);
-        });
+      try {
+        tutorData.Password = await bcrypt.hash(tutorData.Password, 10);
+        tutorData.approved = false; // Set approved to false initially
+        const data = await db.get().collection(collections.TUTOR_COLLECTION).insertOne(tutorData);
+        resolve(data.ops[0]);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 
@@ -186,24 +189,70 @@ module.exports = {
         .collection(collections.TUTOR_COLLECTION)
         .findOne({ Email: tutorData.Email });
       if (tutor) {
-        bcrypt.compare(tutorData.Password, tutor.Password).then((status) => {
-          if (status) {
-            console.log("Login Success");
-            response.tutor = tutor;
-            response.status = true;
-            resolve(response);
-          } else {
-            console.log("Login Failed");
-            resolve({ status: false });
-          }
-        });
+        if (tutor.rejected) {
+          console.log("User is rejected");
+          resolve({ status: "rejected" });
+        } else {
+          bcrypt.compare(tutorData.Password, tutor.Password).then((status) => {
+            if (status) {
+              if (tutor.approved) {
+                console.log("Login Success");
+                response.tutor = tutor;
+                response.status = true;
+              } else {
+                console.log("User not approved");
+                response.status = "pending";
+              }
+              resolve(response);
+            } else {
+              console.log("Login Failed - Incorrect Password");
+              resolve({ status: false });
+            }
+          });
+        }
       } else {
-        console.log("Login Failed");
+        console.log("Login Failed - Email not found");
         resolve({ status: false });
       }
     });
   },
 
+
+  doSignin: (tutorData) => {
+    return new Promise(async (resolve, reject) => {
+      let response = {};
+      let tutor = await db
+        .get()
+        .collection(collections.TUTOR_COLLECTION)
+        .findOne({ Email: tutorData.Email });
+      if (tutor) {
+        if (tutor.rejected) {
+          console.log("User is rejected");
+          resolve({ status: "rejected" });
+        } else {
+          bcrypt.compare(tutorData.Password, tutor.Password).then((status) => {
+            if (status) {
+              if (tutor.approved) {
+                console.log("Login Success");
+                response.tutor = tutor;
+                response.status = true;
+              } else {
+                console.log("User not approved");
+                response.status = "pending";
+              }
+              resolve(response);
+            } else {
+              console.log("Login Failed - Incorrect Password");
+              resolve({ status: false });
+            }
+          });
+        }
+      } else {
+        console.log("Login Failed - Email not found");
+        resolve({ status: false });
+      }
+    });
+  },
   // getProductDetails: (productId) => {
   //   return new Promise((resolve, reject) => {
   //     db.get()

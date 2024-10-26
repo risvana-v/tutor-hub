@@ -90,7 +90,7 @@ router.get("/add-subject", verifySignedIn, function (req, res) {
 
 
 router.post("/add-subject", function (req, res) {
-  // Ensure the builder is signed in and their ID is available
+  // Ensure the tutor is signed in and their ID is available
   if (req.session.signedIntutor && req.session.tutor && req.session.tutor._id) {
     const tutorId = req.session.tutor._id; // Get the tutor's ID from the session
     // Pass the tutorId to the addsub function
@@ -176,44 +176,17 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
     const { Tutorname, Email, Phone, Address, City, Pincode } = req.body;
     let errors = {};
 
-    // Validate first name
-    if (!Tutorname || Tutorname.trim().length === 0) {
-      errors.tutorTutorname = 'Please enter your first name.';
-    }
-
-    if (!City || City.trim().length === 0) {
-      errors.city = 'Please enter your first name.';
-    }
-
-
-    // Validate email format
-    if (!Email || !/^\S+@\S+\.\S+$/.test(Email)) {
-      errors.email = 'Please enter a valid email address.';
-    }
-
-    // Validate phone number
-    if (!Phone) {
-      errors.phone = "Please enter your phone number.";
-    } else if (!/^\d{10}$/.test(Phone)) {
-      errors.phone = "Phone number must be exactly 10 digits.";
-    }
-
-
-    // Validate pincode
-    if (!Pincode) {
-      errors.pincode = "Please enter your pincode.";
-    } else if (!/^\d{6}$/.test(Pincode)) {
-      errors.pincode = "Pincode must be exactly 6 digits.";
-    }
-
-    if (!Tutorname) errors.tutorTutorname = "Please enter your name.";
-    if (!Email) errors.email = "Please enter your email.";
+    // Validation checks
+    if (!Tutorname || Tutorname.trim().length === 0) errors.tutorTutorname = 'Please enter your name.';
+    if (!City || City.trim().length === 0) errors.city = 'Please enter your city.';
+    if (!Email || !/^\S+@\S+\.\S+$/.test(Email)) errors.email = 'Please enter a valid email address.';
+    if (!Phone) errors.phone = "Please enter your phone number.";
+    else if (!/^\d{10}$/.test(Phone)) errors.phone = "Phone number must be exactly 10 digits.";
+    if (!Pincode) errors.pincode = "Please enter your pincode.";
+    else if (!/^\d{6}$/.test(Pincode)) errors.pincode = "Pincode must be exactly 6 digits.";
     if (!Address) errors.address = "Please enter your address.";
-    if (!City) errors.city = "Please enter your city.";
 
-    // Validate other fields as needed...
-
-    // If there are validation errors, re-render the form with error messages
+    // Re-render form if there are validation errors
     if (Object.keys(errors).length > 0) {
       let userProfile = await userHelper.getTutorDetails(req.params.id);
       return res.render("users/edit-profile", {
@@ -230,14 +203,36 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
       });
     }
 
-    // Update the user profile
+    // Update profile in the database
     await tutorHelper.updateTutorProfile(req.params.id, req.body);
 
-    // Fetch the updated user profile and update the session
+    // Handle profile picture upload if present
+    if (req.files && req.files.profile) {
+      let profileImage = req.files.profile;
+      profileImage.mv("./public/images/profile-images/" + req.params.id + ".png", (err) => {
+        if (err) {
+          console.error("Profile picture upload error:", err);
+          return res.status(500).send("Failed to upload profile picture.");
+        }
+      });
+    }
+
+    // Handle certificate upload if present
+    if (req.files && req.files.certificate) {
+      let certificatePDF = req.files.certificate;
+      certificatePDF.mv("./public/images/certificates/" + req.params.id + ".pdf", (err) => {
+        if (err) {
+          console.error("Certificate upload error:", err);
+          return res.status(500).send("Failed to upload certificate.");
+        }
+      });
+    }
+
+    // Fetch the updated profile and update session
     let updatedTutorProfile = await tutorHelper.getTutorDetails(req.params.id);
     req.session.tutor = updatedTutorProfile;
 
-    // Redirect to the profile page
+    // Redirect to profile page
     res.redirect("/tutor/profile");
   } catch (err) {
     console.error("Profile update error:", err);
@@ -245,6 +240,17 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
   }
 });
 
+
+
+router.get("/pending-approval", function (req, res) {
+  if (!req.session.signedIntutor || req.session.tutor.approved) {
+    res.redirect("/tutor");
+  } else {
+    res.render("tutor/pending-approval", {
+      tutor: true, layout: "empty",
+    });
+  }
+});
 
 
 router.get("/signup", function (req, res) {
@@ -260,23 +266,15 @@ router.post("/signup", async function (req, res) {
   let errors = {};
 
   // Field validations
-  if (!Tutorname) errors.tutorname = "Please enter your full name.";
+  if (!Tutorname) errors.Tutorname = "Please enter your company name.";
   if (!Email) errors.email = "Please enter your email.";
   if (!Phone) errors.phone = "Please enter your phone number.";
   if (!Address) errors.address = "Please enter your address.";
   if (!City) errors.city = "Please enter your city.";
   if (!Pincode) errors.pincode = "Please enter your pincode.";
+  if (!Password) errors.password = "Please enter a password.";
 
-  if (!Password) {
-    errors.password = "Please enter a password.";
-  } else {
-    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
-    if (!strongPasswordRegex.test(Password)) {
-      errors.password = "Password must be at least 8 characters long ";
-    }
-  }
-
-  // Check if email or company name already exists
+  // Check if email, company name, or phone already exists
   const existingEmail = await db.get()
     .collection(collections.TUTOR_COLLECTION)
     .findOne({ Email });
@@ -285,9 +283,8 @@ router.post("/signup", async function (req, res) {
   const existingTutorname = await db.get()
     .collection(collections.TUTOR_COLLECTION)
     .findOne({ Tutorname });
-  if (existingTutorname) errors.tutorname = "This name is already registered.";
+  if (existingTutorname) errors.Tutorname = "This company name is already registered.";
 
-  // Validate Pincode and Phone
   if (!/^\d{6}$/.test(Pincode)) errors.pincode = "Pincode must be exactly 6 digits.";
   if (!/^\d{10}$/.test(Phone)) errors.phone = "Phone number must be exactly 10 digits.";
   const existingPhone = await db.get()
@@ -295,12 +292,11 @@ router.post("/signup", async function (req, res) {
     .findOne({ Phone });
   if (existingPhone) errors.phone = "This phone number is already registered.";
 
-  // If there are validation errors, re-render the form
+  // If there are validation errors, re-render the form with the errors and user input
   if (Object.keys(errors).length > 0) {
-    console.log(errors); // This will print out the errors for debugging
     return res.render("tutor/signup", {
       tutor: true,
-      layout: 'admin-empty',
+      layout: 'empty',
       errors,
       Tutorname,
       Email,
@@ -311,74 +307,73 @@ router.post("/signup", async function (req, res) {
       Password
     });
   }
-  tutorHelper.doSignup(req.body).then((response) => {
-    if (!response) {
-      req.session.signUpErr = "Invalid Admin Code";
-      return res.redirect("/tutor/signup");
-    }
 
-    // Extract the id properly, assuming it's part of an object (like MongoDB ObjectId)
-    const id = response._id ? response._id.toString() : response.toString();
+  // Proceed with signup
+  tutorHelper.dosignup(req.body)
+    .then((response) => {
+      if (!response) {
+        req.session.signUpErr = "Invalid Admin Code";
+        return res.redirect("/tutor/signup");
+      }
 
-    // Skip image upload and proceed with session management and redirect
-    req.session.signedIntutor = true;
-    req.session.tutor = response;
+      // Set session and redirect to pending approval
+      req.session.signedIntutor = true;
+      req.session.tutor = response;
+      res.redirect("/tutor/pending-approval");
+    })
+    .catch((err) => {
+      console.log("Error during signup:", err);
+      res.status(500).send("Error during signup");
+    });
+});
+
+
+
+router.get("/signin", function (req, res) {
+  if (req.session.signedIntutor) {
     res.redirect("/tutor");
-
-  }).catch((err) => {
-    console.log("Error during signup:", err);
-    res.status(500).send("Error during signup");
-  });
-
-}),
-
-
-  router.get("/signin", function (req, res) {
-    if (req.session.signedIntutor) {
-      res.redirect("/tutor");
-    } else {
-      res.render("tutor/signin", {
-        admin: false,
-        layout: 'admin-empty',
-        signInErr: req.session.signInErr,
-      });
-      req.session.signInErr = null;
-    }
-  });
-
+  } else {
+    res.render("tutor/signin", {
+      tutor: true, layout: "empty",
+      signInErr: req.session.signInErr,
+    });
+    req.session.signInErr = null;
+  }
+});
 
 router.post("/signin", function (req, res) {
   const { Email, Password } = req.body;
 
+  // Validate Email and Password
   if (!Email || !Password) {
-    req.session.signInErr = "Please fill in all fields.";
-    return res.render("tutor/signin", {
-      admin: false,
-      layout: 'admin-empty',
-      signInErr: req.session.signInErr,
-      email: Email,
-      password: Password,
-
-    });
+    req.session.signInErr = "Please fill all fields.";
+    return res.redirect("/tutor/signin");
   }
 
-  tutorHelper.doSignin(req.body).then((response) => {
-    if (response.status) {
-      req.session.signedIntutor = true;
-      req.session.tutor = response.tutor;
-      res.redirect("/tutor");
-    } else {
-      req.session.signInErr = "Invalid Email/Password";
-      res.render("tutor/signin", {
-        admin: false,
-        layout: 'admin-empty',
-        signInErr: req.session.signInErr,
-        Email,
-        Password
-      });
-    }
-  });
+  tutorHelper.doSignin(req.body)
+    .then((response) => {
+      if (response.status === true) {
+        req.session.signedIntutor = true;
+        req.session.tutor = response.tutor;
+        res.redirect("/tutor");
+      } else if (response.status === "pending") {
+        req.session.signInErr = "This user is not approved by admin, please wait.";
+        res.redirect("/tutor/signin");
+      } else if (response.status === "rejected") {
+        req.session.signInErr = "This user is rejected by admin.";
+        res.redirect("/tutor/signin");
+      } else {
+        req.session.signInErr = "Invalid Email/Password";
+        res.redirect("/tutor/signin");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      req.session.signInErr = "An error occurred. Please try again.";
+      res.redirect("/tutor/signin");
+    });
 });
+
 
 router.get("/signout", function (req, res) {
   req.session.signedIntutor = false;
