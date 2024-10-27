@@ -442,6 +442,8 @@ module.exports = {
     });
   },
 
+
+
   generateRazorpay: (orderId, totalPrice) => {
     return new Promise((resolve, reject) => {
       var options = {

@@ -55,10 +55,10 @@
                                                 class="bi bi-ban"></i></button>
                                     </form>
                                     {{/if}}
-                                    <form action="/admin/delete-tutor/{{this._id}}" method="POST">
-                                        <button type="submit" class="btn btn-danger btn-sm"><i
-                                                class="bi bi-trash"></i></button>
-                                    </form>
+                                    <a href="/admin/delete-tutor/{{this._id}}" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are You Sure to Delete {{this.Tutorname}} ?')"><i
+                                            class="bi bi-trash"></i></a>
+                                    </a>
                                 </div>
                             </td>
 

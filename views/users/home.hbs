@@ -68,13 +68,16 @@
 
             <div class="row gy-4">
                 {{#each tutors}}
+                {{#if this.approved}}
                 <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="features-item">
                         <i class="bi bi-person-circle" style="color: #000000;"></i>
                         <h3><a href="/single-tutor/{{this._id}}" class="stretched-link">{{this.Tutorname}}</a></h3>
                     </div>
                 </div><!-- End Feature Item -->
+                {{/if}}
                 {{/each}}
+
 
 
             </div>

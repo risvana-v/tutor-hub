@@ -62,6 +62,22 @@
                                 <input class="form-control" id="exampleInputText" name="Image" accept="image/*"
                                     type="file" required>
                             </div>
+                            <hr>
+                            <h5 class="mb-3">Videos</h5>
+                            <div id="fields-container" class="mt-2">
+                                <!-- Initial fields -->
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col">
+                                        <input type="text" class="form-control" placeholder="Video Name" name="name[]">
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control" placeholder="Video Link" name="link[]">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-success" onclick="addFields()">+</button>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -87,4 +103,55 @@
     // Set default value to current date and time in 12-hour format with AM/PM
     const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById('datetime').value = defaultDateTime;
+</script>
+
+<script>
+    function addFields() {
+        const container = document.getElementById("fields-container");
+
+        // Create a new row for the fields
+        const newRow = document.createElement("div");
+        newRow.className = "row mb-3 align-items-center";
+
+        // Name field
+        const nameCol = document.createElement("div");
+        nameCol.className = "col";
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.className = "form-control";
+        nameInput.placeholder = "Video Name";
+        nameInput.name = "name[]";
+        nameCol.appendChild(nameInput);
+
+        // Link field
+        const linkCol = document.createElement("div");
+        linkCol.className = "col";
+        const linkInput = document.createElement("input");
+        linkInput.type = "text";
+        linkInput.className = "form-control";
+        linkInput.placeholder = "Video Link";
+        linkInput.name = "link[]";
+        linkCol.appendChild(linkInput);
+
+        // Add delete button
+        const btnCol = document.createElement("div");
+        btnCol.className = "col-auto";
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "btn btn-danger";
+        deleteButton.textContent = "-";
+        deleteButton.onclick = function () {
+            container.removeChild(newRow);
+        };
+        btnCol.appendChild(deleteButton);
+
+        // Append columns to the new row
+        newRow.appendChild(nameCol);
+        newRow.appendChild(linkCol);
+        newRow.appendChild(btnCol);
+
+        // Append the new row to the container
+        container.appendChild(newRow);
+    }
+
 </script>
