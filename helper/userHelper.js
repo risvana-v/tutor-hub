@@ -23,6 +23,22 @@ module.exports = {
     });
   },
 
+  getProductsByTutorId: (tutorId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Convert the tutorId to ObjectId before querying
+        let products = await db
+          .get()
+          .collection(collections.PRODUCTS_COLLECTION)
+          .find({ tutorId: objectId(tutorId) }) // Use ObjectId to filter by tutorId
+          .toArray();
+        resolve(products);
+      } catch (error) {
+        reject(error); // Handle errors by rejecting the promise
+      }
+    });
+  },
+
   getAllTutors: () => {
     return new Promise(async (resolve, reject) => {
       let tutors = await db
@@ -85,6 +101,8 @@ module.exports = {
               Lname: userDetails.Lname,
               Email: userDetails.Email,
               Phone: userDetails.Phone,
+              Age: userDetails.Age,
+              class: userDetails.class,
               // Address: userDetails.Address,
               // District: userDetails.District,
               // Pincode: userDetails.Pincode,

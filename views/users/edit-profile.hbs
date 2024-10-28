@@ -33,9 +33,7 @@
                 <form action="/edit-profile/{{userProfile._id}}" method="POST" enctype="multipart/form-data">
 
                     <div class="form-group">
-                        <label>Profile Picture</label>
-                        <input class="form-control" type="file" id="profile" name="profile"
-                            value="{{tutorProfile.profile}}" required>
+
                         {{!-- {{#if errors.phone}}
                         <small class="text-danger">{{errors.phone}}</small>
                         {{/if}} --}}
@@ -82,6 +80,30 @@
                         <small class="text-danger">{{errors.phone}}</small>
                         {{/if}}
                     </div>
+
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input class="form-control" type="number" id="Age" name="Age" value="{{userProfile.Age}}"
+                            required>
+                        {{#if errors.age}}
+                        <small class="text-danger">{{errors.age}}</small>
+                        {{/if}}
+                    </div>
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select class="form-select" name="class" aria-label="Default select example">
+                            <option value="{{userProfile.class}}" selected disabled>{{userProfile.class}}</option>
+                            <option value="8-10">8-10th</option>
+                            <option value="+1+2">+1/+2</option>
+                            <option value="Degree-ro-pg">Degree/PG</option>
+                        </select>
+                    </div>
+
+                    <label for="email" class="right-container__label">Profile Picture</label>
+                    <input type="file" class="form-control right-container__input" name="profile" value="{{Image}}"
+                        type="image" placeholder="Enter Image">
+                    {{#if errors.image}}<div class="text-danger">{{errors.image}}</div>{{/if}}
+
 
                     {{!-- <div class="form-group">
                         <label>Address</label>
