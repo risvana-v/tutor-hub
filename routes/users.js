@@ -39,13 +39,16 @@ router.get("/single-tutor/:id", async function (req, res) {
   const tutorId = req.params.id; // Get tutor ID from URL
 
   try {
-    const tutor = await userHelper.getTutorById(tutorId); // Pass the tutor ID to the function
-    res.render("users/single-tutor", { admin: false, user, tutor });
+    const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+    const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
+
+    res.render("users/single-tutor", { admin: false, user, tutor, products });
   } catch (error) {
-    console.error("Error fetching tutor:", error);
+    console.error("Error fetching tutor or products:", error);
     res.status(500).send("Server Error");
   }
 });
+
 
 
 router.get("/edit-profile/:id", verifySignedIn, async function (req, res) {
