@@ -85,6 +85,8 @@ module.exports = {
               Lname: userDetails.Lname,
               Email: userDetails.Email,
               Phone: userDetails.Phone,
+              Age: userDetails.Age,
+              class: userDetails.class,
               // Address: userDetails.Address,
               // District: userDetails.District,
               // Pincode: userDetails.Pincode,

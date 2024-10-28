@@ -88,7 +88,9 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
     // Handle profile picture upload
     if (req.files && req.files.profile) {
       let profileImage = req.files.profile;
-      const profileImagePath = "./public/images/user-profile-images/" + req.params.id + ".png";
+
+      // Specify the path for the profile image based on user ID
+      const profileImagePath = `./public/images/user-profile-images/${req.params.id}.png`;
 
       // Move the uploaded file to the specified path
       await profileImage.mv(profileImagePath);
@@ -126,7 +128,7 @@ router.get("/signup", function (req, res) {
 });
 
 router.post("/signup", async function (req, res) {
-  const { Fname, Lname, Email, Phone, Password } = req.body;
+  const { Fname, Lname, Email, Phone, Password, Age } = req.body;
   let errors = {};
 
   // Check if email already exists
@@ -139,7 +141,6 @@ router.post("/signup", async function (req, res) {
   }
 
   // Validate phone number length and uniqueness
-
   if (!Phone) {
     errors.phone = "Please enter your phone number.";
   } else if (!/^\d{10}$/.test(Phone)) {
@@ -154,10 +155,11 @@ router.post("/signup", async function (req, res) {
     }
   }
 
-
+  // Validate first name, last name, and email
   if (!Fname) errors.fname = "Please enter your first name.";
   if (!Lname) errors.lname = "Please enter your last name.";
   if (!Email) errors.email = "Please enter your email.";
+  if (!Age) errors.age = "Please enter your email.";
 
   // Password validation
   if (!Password) {
@@ -169,6 +171,9 @@ router.post("/signup", async function (req, res) {
     }
   }
 
+
+
+  // Check for errors and re-render form if any
   if (Object.keys(errors).length > 0) {
     return res.render("users/signup", {
       admin: false,
@@ -178,33 +183,59 @@ router.post("/signup", async function (req, res) {
       Lname,
       Email,
       Phone,
-      Password
+      Password,
+      Age,
     });
   }
 
   // Proceed with signup
+  // Proceed with signup
   userHelper.doSignup(req.body).then((response) => {
-    req.session.signedIn = true;
-    req.session.user = response;
-    res.redirect("/");
+    console.log("User response:", response); // Log user response
+
+    // Check if the file is present
+    if (req.files && req.files.ProfileImage) {
+      let image = req.files.ProfileImage;
+      console.log("Received image:", image); // Log the image file
+
+      // Sanitize Fname
+      const sanitizedFname = Fname.replace(/[^a-zA-Z0-9]/g, "_");
+      const imagePath = `./public/images/user-images/${sanitizedFname}.png`;
+
+      // Move the image
+      image.mv(imagePath, (err) => {
+        if (err) {
+          console.error("Image upload error:", err);
+          return res.status(500).send("Image upload failed.");
+        }
+        req.session.signedIn = true;
+        req.session.user = response;
+        res.redirect("/");
+      });
+    } else {
+      req.session.signedIn = true;
+      req.session.user = response;
+      res.redirect("/");
+    }
   }).catch((err) => {
     console.error("Signup error:", err);
     res.status(500).send("An error occurred during signup.");
   });
-});
+}),
 
-router.get("/signin", function (req, res) {
-  if (req.session.signedIn) {
-    res.redirect("/");
-  } else {
-    res.render("users/signin", {
-      admin: false,
-      layout: 'admin-empty',
-      signInErr: req.session.signInErr,
-    });
-    req.session.signInErr = null;
-  }
-});
+
+  router.get("/signin", function (req, res) {
+    if (req.session.signedIn) {
+      res.redirect("/");
+    } else {
+      res.render("users/signin", {
+        admin: false,
+        layout: 'admin-empty',
+        signInErr: req.session.signInErr,
+      });
+      req.session.signInErr = null;
+    }
+  });
 
 
 router.post("/signin", function (req, res) {

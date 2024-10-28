@@ -31,6 +31,7 @@
                 <h4 class="mb-5 text-left">My Profile</h4>
                 {{#if tutor}}
                 <div class="row gap-3">
+                    {{#if tutor.qualifications}} <!-- Check if qualifications exist -->
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Profile Picture</label><br>
@@ -44,6 +45,7 @@
                                 Certificate</a>
                         </div>
                     </div>
+                    {{/if}}
                     <br><br><br>
                     <form action="#!" method="">
                         <div class="row g-1">
