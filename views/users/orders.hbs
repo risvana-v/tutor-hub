@@ -7,33 +7,50 @@
                 <thead class="table-dark">
                     <tr class="align-middle">
                         <th scope="col">Date</th>
+                        <th scope="col">Course Name</th>
                         <th scope="col">Amount</th>
-                        <th scope="col">Payment</th>
-                        {{!-- <th scope="col">Status</th>
-                        <th scope="col">Cancel</th> --}}
+                        {{!-- <th scope="col">Payment</th> --}}
+                        <th scope="col">Status</th>
+                        {{!-- <th scope="col">Cancel</th> --}}
                         <th scope="col">View</th>
+                        <th scope="col">Chat</th>
+
                     </tr>
                 </thead>
 
                 <tbody>
                     {{#each orders}}
                     <tr class="align-middle">
-                        <td>{{this.orderObject.date}}</td>
+                        <td>{{formatDate this.orderObject.date}}</td>
+
+                        {{#each this.products}}
+                        <td>{{this.product.name}} {{this.tutorId}}</td>
+                        {{/each}}
 
                         <td>{{this.orderObject.totalAmount}}/-</td>
-                        <td>{{this.orderObject.paymentMethod}}</td>
-                        {{!-- <td>{{this.orderObject.status}}</td> --}}
-                        {{!-- <td>
-                            <a href="/cancel-order/{{this._id}}"
-                                onclick="return confirm('Are You Sure to Cancel This Order ?')"
-                                class="btn btn-danger">Cancel</a>
-                        </td> --}}
+                        <td>{{this.orderObject.status}}</td>
+
                         <td>
                             <a href="/view-ordered-products/{{this._id}}" class="btn btn-primary">View Course</a>
+                        </td>
+
+                        <td>
+                            {{#each this.products}}
+                            {{#if (eq ../orderObject.status "placed")}}
+                            <button class="btn btn-dark" disabled>Tutor is not accepted</button>
+                            {{else if (eq ../orderObject.status "Rejected")}}
+                            <button class="btn btn-dark" disabled>Tutor is Rejected your chat</button>
+                            {{else}}
+                            <a href="/single-chat/{{this.tutorId}}" class="btn btn-dark">Chat with tutor</a>
+                            {{/if}}
+                            {{/each}}
+                        </td>
+
                         </td>
                     </tr>
                     {{/each}}
                 </tbody>
+
             </table>
         </div>
     </div>

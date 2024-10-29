@@ -34,6 +34,49 @@ router.get("/profile", async function (req, res, next) {
 });
 
 
+
+router.get("/chat", async function (req, res, next) {
+  let user = req.session.user;
+  let tutors = await userHelper.getAllTutors();
+  console.log("Tutors---------", tutors)
+  res.render("users/chat", { admin: false, user, tutors });
+});
+
+
+router.get("/single-chat/:id", async function (req, res) {
+  let user = req.session.user;
+  const tutorId = req.params.id; // Get tutor ID from URL
+
+  try {
+    const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+    const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
+    const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
+
+    res.render("users/single-chat", { admin: false, user, tutor, layout: "layout", products, chats });
+  } catch (error) {
+    console.error("Error fetching tutor or products:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.post("/add-chat", function (req, res) {
+  const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
+  const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
+
+  const chatData = {
+    ...req.body,
+    tutorId,
+    userId,
+  };
+
+  userHelper.addChat(chatData, (id) => {
+    // Redirect to /single-chat/:id after adding chat
+    res.redirect(`/single-chat/${tutorId}`);
+  });
+});
+
+
+
 router.get("/single-tutor/:id", async function (req, res) {
   let user = req.session.user;
   const tutorId = req.params.id; // Get tutor ID from URL
@@ -330,8 +373,14 @@ router.get("/place-order", verifySignedIn, async (req, res) => {
 
 router.post("/place-order", async (req, res) => {
   let user = req.session.user;
-  let products = await userHelper.getCartProductList(req.body.userId);
-  let totalPrice = await userHelper.getTotalAmount(req.body.userId);
+
+  // Convert userId to ObjectId
+  const userId = ObjectId(req.body.userId); // Ensure req.body.userId is a valid ObjectId string
+
+  // Get cart products and total amount using the ObjectId
+  let products = await userHelper.getCartProductList(userId); // Pass ObjectId to your helper function
+  let totalPrice = await userHelper.getTotalAmount(userId); // Pass ObjectId to your helper function
+
   userHelper
     .placeOrder(req.body, products, totalPrice, user)
     .then((orderId) => {
@@ -342,6 +391,11 @@ router.post("/place-order", async (req, res) => {
           res.json(response);
         });
       }
+    })
+    .catch((err) => {
+      // Handle any errors
+      console.error("Error placing order:", err);
+      res.status(500).json({ error: "Failed to place order" });
     });
 });
 
@@ -369,30 +423,42 @@ router.get("/order-placed", verifySignedIn, async (req, res) => {
 router.get("/orders", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
-  let orderId = req.params.id;
   let cartCount = await userHelper.getCartCount(userId);
   let orders = await userHelper.getUserOrder(userId);
-  let products = await userHelper.getOrderProducts(orderId);
-  res.render("users/orders", { admin: false, user, cartCount, orders, products });
+
+  // Fetch products for each order and attach tutorId
+  const ordersWithProducts = await Promise.all(
+    orders.map(async (order) => {
+      let products = await userHelper.getOrderProducts(order._id);
+      return { ...order, products };
+    })
+  );
+
+  console.log(ordersWithProducts); // Check tutorId here for each product in the order
+
+  res.render("users/orders", {
+    admin: false,
+    user,
+    cartCount,
+    orders: ordersWithProducts
+  });
 });
 
-router.get(
-  "/view-ordered-products/:id",
-  verifySignedIn,
-  async function (req, res) {
-    let user = req.session.user;
-    let userId = req.session.user._id;
-    let cartCount = await userHelper.getCartCount(userId);
-    let orderId = req.params.id;
-    let products = await userHelper.getOrderProducts(orderId);
-    res.render("users/order-products", {
-      admin: false,
-      user,
-      cartCount,
-      products,
-    });
-  }
-);
+// View Ordered Products Route
+router.get("/view-ordered-products/:id", verifySignedIn, async function (req, res) {
+  let user = req.session.user;
+  let userId = req.session.user._id;
+  let cartCount = await userHelper.getCartCount(userId);
+  let orderId = req.params.id;
+  let products = await userHelper.getOrderProducts(orderId);
+
+  res.render("users/order-products", {
+    admin: false,
+    user,
+    cartCount,
+    products,
+  });
+});
 
 router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
   let orderId = req.params.id;

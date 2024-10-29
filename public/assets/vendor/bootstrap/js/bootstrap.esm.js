@@ -193,7 +193,7 @@ const findShadowRoot = element => {
   }
   return findShadowRoot(element.parentNode);
 };
-const noop = () => {};
+const noop = () => { };
 
 /**
  * Trick to restart an element's animation
@@ -288,7 +288,7 @@ const getNextActiveElement = (list, activeElement, shouldGetNext, isCycleAllowed
   let index = list.indexOf(activeElement);
 
   // if the element does not exist in the list return an element
-  // depending on the direction and if cycle is allowed
+  // deplaced on the direction and if cycle is allowed
   if (index === -1) {
     return !shouldGetNext && isCycleAllowed ? list[listLength - 1] : list[0];
   }

@@ -201,7 +201,7 @@ module.exports = {
                 response.status = true;
               } else {
                 console.log("User not approved");
-                response.status = "pending";
+                response.status = "placed";
               }
               resolve(response);
             } else {
@@ -238,7 +238,7 @@ module.exports = {
                 response.status = true;
               } else {
                 console.log("User not approved");
-                response.status = "pending";
+                response.status = "placed";
               }
               resolve(response);
             } else {

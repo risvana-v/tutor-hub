@@ -4,7 +4,12 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <h2>Enter Purchase details</h2><br>
+                    {{#each tutorIds}}
+                    <li>hiii : {{this}}</li>
+                    {{/each}}
                     <div class="card shadow p-4">
+                        <input type="hidden" name="userId" id="userId" value={{user._id}} class="form-control"><br>
+
                         <label for="">Name</label>
                         <input type="text" name="name" id="name" value={{user.Fname}} class="form-control"><br>
                         <label for="">Email</label>
@@ -13,6 +18,7 @@
                         <input type="text" name="mobile" id="mobile" value={{user.Phone}} class="form-control">
                         <input type="text" name="userId" value="{{user._id}}" hidden>
                     </div>
+
                 </div>
                 <div class="col-md-6">
                     <div class="container mt-5 ml-5 card shadow p-3">

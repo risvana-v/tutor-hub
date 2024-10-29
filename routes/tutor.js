@@ -28,6 +28,40 @@ router.get("/", verifySignedIn, async function (req, res, next) {
 });
 
 
+
+router.get("/single-chat/:id", async function (req, res) {
+  let tutor = req.session.tutor;
+  const tutorId = req.params.id; // Get tutor ID from URL
+
+  try {
+    const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+    const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
+    const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
+
+    res.render("users/single-chat", { admin: false, user, tutor, layout: "layout", products, chats });
+  } catch (error) {
+    console.error("Error fetching tutor or products:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.post("/add-chat", function (req, res) {
+  const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
+  const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
+
+  const chatData = {
+    ...req.body,
+    tutorId,
+    userId,
+  };
+
+  userHelper.addChat(chatData, (id) => {
+    // Redirect to /single-chat/:id after adding chat
+    res.redirect(`/single-chat/${tutorId}`);
+  });
+});
+
+
 router.get("/all-orders", verifySignedIn, async function (req, res) {
   let tutor = req.session.tutor;
   let orders = await adminHelper.getAllOrders();
@@ -242,11 +276,11 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
 
 
 
-router.get("/pending-approval", function (req, res) {
+router.get("/placed-approval", function (req, res) {
   if (!req.session.signedIntutor || req.session.tutor.approved) {
     res.redirect("/tutor");
   } else {
-    res.render("tutor/pending-approval", {
+    res.render("tutor/placed-approval", {
       tutor: true, layout: "empty",
     });
   }
@@ -316,10 +350,10 @@ router.post("/signup", async function (req, res) {
         return res.redirect("/tutor/signup");
       }
 
-      // Set session and redirect to pending approval
+      // Set session and redirect to placed approval
       req.session.signedIntutor = true;
       req.session.tutor = response;
-      res.redirect("/tutor/pending-approval");
+      res.redirect("/tutor/placed-approval");
     })
     .catch((err) => {
       console.log("Error during signup:", err);
@@ -356,7 +390,7 @@ router.post("/signin", function (req, res) {
         req.session.signedIntutor = true;
         req.session.tutor = response.tutor;
         res.redirect("/tutor");
-      } else if (response.status === "pending") {
+      } else if (response.status === "placed") {
         req.session.signInErr = "This user is not approved by admin, please wait.";
         res.redirect("/tutor/signin");
       } else if (response.status === "rejected") {

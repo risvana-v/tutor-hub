@@ -27,6 +27,8 @@
                     <tr class="align-middle">
                         {{!-- <td>{{this.orderObject.date}}</td> --}}
                         <td>{{this.orderObject.deliveryDetails.name}}</td>
+                        {{!-- <td>{{this.orderObject.userId}}</td> --}}
+
                         <td>{{this.orderObject.deliveryDetails.email}}</td>
                         <td>{{this.orderObject.deliveryDetails.mobile}}</td>
                         <td>{{this.orderObject.totalAmount}}/-</td>
@@ -63,6 +65,10 @@
                         </td>
                         <td>
                             <a href="/tutor/view-ordered-products/{{this._id}}" class="btn btn-primary">View Course</a>
+                        </td>
+                        <td>
+                            <a href="/tutor/single-chat/{{this.orderObject.userId}}" class="btn btn-primary">Chat with
+                                user</a>
                         </td>
                     </tr>
                     {{/each}}

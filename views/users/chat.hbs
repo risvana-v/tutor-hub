@@ -1,0 +1,20 @@
+<br><br><br><br><br>
+<main class="main">
+
+    <div class="container">
+        <h6>Chat With Our Tutors</h6>
+        <div class="row gy-4">
+            {{#each tutors}}
+            {{#if this.approved}}
+            <div class="col-lg-3 col-md-4">
+                <div class="card shadow-sm p-3">
+                    <i class="bi bi-person-circle" style="color: #000000;"></i>
+                    <h3><a href="/single-chat/{{this._id}}" class="stretched-link">{{this.Tutorname}}</a></h3>
+                </div>
+            </div><!-- End Feature Item -->
+            {{/if}}
+            {{/each}}
+
+        </div>
+    </div>
+</main>

@@ -6,5 +6,6 @@ module.exports = {
     ORDER_COLLECTION: 'order',
     TUTOR_COLLECTION: 'tutor',
     SUBJECT_COLLECTION: "subjects",
+    CHATS_COLLECTION: "chat",
 
 }

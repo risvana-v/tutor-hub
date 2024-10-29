@@ -5,9 +5,10 @@
   */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@popperjs/core')) :
-  typeof define === 'function' && define.amd ? define(['@popperjs/core'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.bootstrap = factory(global.Popper));
-})(this, (function (Popper) { 'use strict';
+    typeof define === 'function' && define.amd ? define(['@popperjs/core'], factory) :
+      (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.bootstrap = factory(global.Popper));
+})(this, (function (Popper) {
+  'use strict';
 
   function _interopNamespaceDefault(e) {
     const n = Object.create(null, { [Symbol.toStringTag]: { value: 'Module' } });
@@ -216,7 +217,7 @@
     }
     return findShadowRoot(element.parentNode);
   };
-  const noop = () => {};
+  const noop = () => { };
 
   /**
    * Trick to restart an element's animation
@@ -311,7 +312,7 @@
     let index = list.indexOf(activeElement);
 
     // if the element does not exist in the list return an element
-    // depending on the direction and if cycle is allowed
+    // deplaced on the direction and if cycle is allowed
     if (index === -1) {
       return !shouldGetNext && isCycleAllowed ? list[listLength - 1] : list[0];
     }

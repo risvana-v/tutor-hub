@@ -11,6 +11,35 @@ var instance = new Razorpay({
 
 module.exports = {
 
+
+  getChatwithId: (tutorId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const feedbacks = await db.get()
+          .collection(collections.CHATS_COLLECTION)
+          .find({ tutorId: objectId(tutorId) }) // Convert workspaceId to ObjectId
+          .toArray();
+
+        resolve(feedbacks);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
+
+  addChat: (chat, callback) => {
+    console.log(chat);
+    db.get()
+      .collection(collections.CHATS_COLLECTION)
+      .insertOne(chat)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
   ///////GET ALL product/////////////////////                                            
   getAllproducts: () => {
     return new Promise(async (resolve, reject) => {
@@ -382,7 +411,7 @@ module.exports = {
   placeOrder: (order, products, total, user) => {
     return new Promise(async (resolve, reject) => {
       console.log(order, products, total);
-      let status = order["payment-method"] === "COD" ? "placed" : "pending";
+      let status = order["payment-method"] === "COD" ? "placed" : "placed";
       let orderObject = {
         deliveryDetails: {
           name: order.name,
@@ -416,11 +445,11 @@ module.exports = {
         .collection(collections.ORDER_COLLECTION)
         .find({ "orderObject.userId": objectId(userId) })
         .toArray();
-      // console.log(orders);
       resolve(orders);
     });
   },
 
+  // Helper Function to Get Order Products Including tutorId
   getOrderProducts: (orderId) => {
     return new Promise(async (resolve, reject) => {
       let products = await db
@@ -452,10 +481,12 @@ module.exports = {
               item: 1,
               quantity: 1,
               product: { $arrayElemAt: ["$product", 0] },
+              tutorId: { $arrayElemAt: ["$product.tutorId", 0] }, // Ensure tutorId is included here
             },
           },
         ])
         .toArray();
+
       resolve(products);
     });
   },
