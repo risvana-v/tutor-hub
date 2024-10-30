@@ -1,0 +1,78 @@
+<section>
+    <div class="container mt-2"><br><br>
+        <a href="/" class="btn btn-dark">back</a>
+        <br><br>
+
+        <div class="card p-4 mx-auto">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img src="/images/subject-images/{{product._id}}.png" class="card-img-top" alt="phone-image"
+                        style="height: 17rem;">
+                </div>
+                <div class="col-lg-6">
+                    <div class="card-body pb-1">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h5 class="card-title">{{product.name}}</h5>
+                            <p class="card-text"><small>₹{{product.Price}}</small></p>
+                        </div>
+                        <p class="card-text">{{product.desc}}</p><br>
+                        <h5>Tutor Details : </h5>
+                        <hr>
+                        Tutor : {{product.tutorname}} <br>
+                        Email : {{product.tutoremail}}
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-5">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <h5>Add your review</h5>
+                    <hr>
+                    {{#if user}}
+                    <form action="/add-feedback" method="post" class="mb-3">
+                        <input type="hidden" name="productId" value={{product._id}}>
+                        <input type="hidden" name="tutorId" value={{product.tutorId}}>
+
+                        <!-- Hidden field for product ID -->
+                        <label for="" class="mb-2">Your name</label>
+                        <input class="form-control" type="text" name="username" value={{user.Fname}} {{user.Lname}}>
+                        <label for="" class="mb-2 mt-3">Your Feedback</label>
+                        <textarea class="form-control " type="text" name="text" required
+                            placeholder="Enter your feedback"></textarea>
+                        <button type="submit" class="btn btn-dark mt-3 w-100">Submit</button>
+                    </form>
+                    {{else}}
+                    <a href="/signin" class="btn btn-dark">Please login to add your reviews</a>
+                    {{/if}}
+                </div>
+                <div class="col-lg-8">
+                    <div class="feedback-section ">
+                        <h5>All Review</h5>
+                        <hr>
+                        {{#each feedbacks}}
+                        <div class="card p-3 shadow mb-2">
+                            <p class="date-cell"><small>Submitted on {{ this.createdAt}}</small></p>
+
+                            <p>
+                                <strong class="">{{this.username}}<br></strong>
+                            </p>
+                            <p>{{this.text}}</p>
+                        </div>
+                        {{else}}
+                        <p>No feedback available for this product.</p>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+</section>

@@ -67,8 +67,15 @@
                             <a href="/tutor/view-ordered-products/{{this._id}}" class="btn btn-primary">View Course</a>
                         </td>
                         <td>
+
                             <a href="/tutor/single-chat/{{this.orderObject.userId}}" class="btn btn-primary">Chat with
                                 user</a>
+
+                            {{!-- <a
+                                href="/tutor/single-chat/{{this.orderObject.userId}}/{{#each this.products}}{{this.tutorId}}{{/each}}"
+                                class="btn btn-primary">Chat with
+                                user</a> --}}
+
                         </td>
                     </tr>
                     {{/each}}

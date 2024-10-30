@@ -1,0 +1,44 @@
+<main id="main" class="main">
+
+    <section>
+        <div class="container my-5">
+            <h4 class="mb-4">Manage All Feedbacks</h4>
+
+            {{!-- <a href="/admin/add-reply" class="btn btn-dark mb-2">Give Reply</a> --}}
+            <div class="row g-0">
+                <div class="col-lg-12">
+                    <div class="table-responsive" style="overflow: visible;">
+                        <table class="table table-bordered" id="table">
+                            <thead class="table-dark">
+                                <tr class="align-middle">
+                                    {{!-- <th scope="col">Date</th> --}}
+                                    <th scope="col">User Name</th>
+                                    <th scope="col">Feedback</th>
+                                    {{!-- <th scope="col">Rating</th> --}}
+
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {{#each feedbacks}}
+                                <tr class="align-middle">
+                                    {{!-- <td>{{this.orderObject.date}}</td> --}}
+
+                                    <td>{{this.username}}</td>
+                                    <td>{{this.text}}</td>
+                                    {{!-- <td>{{this.rating}}</td> --}}
+
+
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>

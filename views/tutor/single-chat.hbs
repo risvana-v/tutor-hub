@@ -46,9 +46,9 @@
 
         {{/each}}
 
-        {{#each replies}}
+        {{#each reply}}
         <div class="message">
-            <p><strong>Staff</strong> : {{this.reply}} </p>
+            <p><strong>You</strong> : {{this.msg}} </p>
         </div>
         {{/each}}
 
@@ -56,13 +56,11 @@
     </div>
 
     <!-- Fixed input area at the bottom -->
-    <form action="/add-chat" method="post">
-        <input type="hidden" name="tutorId" value="{{tutor._id}}" />
+    <form action="/tutor/reply" method="post">
 
         <div class="chat-input">
             <div class="input-group">
-                <input type="hidden" name="userId" value={{user._id}}>
-                <input type="hidden" name="name" value={{user.Fname}}>
+                <input type="text" name="name" value={{tutor.tutorname}}>
                 <input type="text" class="form-control" name="msg" placeholder="Type your message..."
                     aria-label="Type your message">
                 <button class="btn btn-primary" type="submit">Send</button>

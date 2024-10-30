@@ -29,6 +29,27 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
+router.get("/all-feedbacks", verifySignedIn, function (req, res) {
+  let administator = req.session.admin;
+  adminHelper.getAllFeedbacks().then((feedbacks) => {
+    res.render("admin/all-feedbacks", { admin: true, feedbacks, layout: 'admin', administator });
+  });
+});
+
+router.get("/add-reply", verifySignedIn, async function (req, res) {
+  let administator = req.session.admin;
+  let feedbacks = await adminHelper.getAllFeedbacks();
+  res.render("admin/add-reply", { admin: true, layout: "admin", feedbacks, administator });
+});
+
+///////ADD reply/////////////////////                                         
+router.post("/add-reply", function (req, res) {
+  adminHelper.addreply(req.body, (id) => {
+    res.redirect("/admin/all-feedbacks");
+  });
+});
+
+
 router.get("/all-tutors", verifySignedIn, function (req, res) {
   let administator = req.session.admin;
   adminHelper.getAllTutors().then((tutors) => {

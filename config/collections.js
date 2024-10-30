@@ -7,5 +7,7 @@ module.exports = {
     TUTOR_COLLECTION: 'tutor',
     SUBJECT_COLLECTION: "subjects",
     CHATS_COLLECTION: "chat",
+    REPLY_COLLECTION: "reply",
+    FEEDBACK_COLLECTION: "feedback",
 
 }

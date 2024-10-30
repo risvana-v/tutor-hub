@@ -3,6 +3,8 @@ var collections = require("../config/collections");
 const bcrypt = require("bcrypt");
 const objectId = require("mongodb").ObjectID;
 const Razorpay = require("razorpay");
+// const { ObjectId } = require("mongodb"); // Ensure ObjectId is imported
+
 
 var instance = new Razorpay({
   key_id: "rzp_test_8NokNgt8cA3Hdv",
@@ -11,6 +13,72 @@ var instance = new Razorpay({
 
 module.exports = {
 
+
+  getFeedbackByProductId: (productId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const feedbacks = await db.get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .find({ productId: objectId(productId) }) // Convert workspaceId to ObjectId
+          .toArray();
+
+        resolve(feedbacks);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
+  addFeedback: (feedback) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await db.get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .insertOne(feedback);
+        resolve(); // Resolve the promise on success
+      } catch (error) {
+        reject(error); // Reject the promise on error
+      }
+    });
+  },
+
+
+  getProductById: (productId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const product = await db.get()
+          .collection(collections.PRODUCTS_COLLECTION)
+          .findOne({ _id: objectId(productId) }); // Convert productId to ObjectId
+        resolve(product);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
+  getChatWithIdBoth: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("Fetching chats with tutorId:", "and userId:", userId);
+
+        const feedbacks = await db.get()
+          .collection(collections.CHATS_COLLECTION)
+          .find({
+            // tutorId: ObjectId(tutorId), // Ensure these match the format in MongoDB
+            userId: objectId(userId)
+          })
+          .toArray();
+
+        console.log("Chats found:", feedbacks);
+        resolve(feedbacks);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+        reject(error);
+      }
+    });
+  },
 
   getChatwithId: (tutorId) => {
     return new Promise(async (resolve, reject) => {
@@ -411,7 +479,7 @@ module.exports = {
   placeOrder: (order, products, total, user) => {
     return new Promise(async (resolve, reject) => {
       console.log(order, products, total);
-      let status = order["payment-method"] === "COD" ? "placed" : "placed";
+      let status = order["payment-method"] === "COD" ? "placed" : "pending";
       let orderObject = {
         deliveryDetails: {
           name: order.name,

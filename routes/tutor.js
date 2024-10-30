@@ -28,36 +28,57 @@ router.get("/", verifySignedIn, async function (req, res, next) {
 });
 
 
-
-router.get("/single-chat/:id", async function (req, res) {
+router.get("/all-feedbacks", verifySignedIn, function (req, res) {
   let tutor = req.session.tutor;
-  const tutorId = req.params.id; // Get tutor ID from URL
+  adminHelper.getAllFeedbacks().then((feedbacks) => {
+    res.render("tutor/all-feedbacks", { admin: false, feedbacks, tutor });
+  });
+});
+
+
+
+router.get("/single-chat/:userId", async function (req, res) {
+  // const tutorId = req.params.tutorId; // Get tutor ID from URL
+  const userId = req.params.userId; // Get user ID from URL
 
   try {
-    const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
-    const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
-    const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
+    let tutor = req.session.tutor;
 
-    res.render("users/single-chat", { admin: false, user, tutor, layout: "layout", products, chats });
+    // const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+    // const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
+    const chats = await userHelper.getChatWithIdBoth(userId); // Fetch chats for the specific tutor and user
+    const reply = await tutorHelper.getReply(); // Fetch chats for the specific tutor and user
+
+    console.log("chattttttttt", chats)
+    res.render("tutor/single-chat", { admin: false, tutor, chats, reply });
+
   } catch (error) {
-    console.error("Error fetching tutor or products:", error);
+    console.error("Error fetching tutor, products, or chats:", error);
     res.status(500).send("Server Error");
   }
 });
 
-router.post("/add-chat", function (req, res) {
-  const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
-  const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
 
-  const chatData = {
-    ...req.body,
-    tutorId,
-    userId,
-  };
+// router.post("/reply", function (req, res) {
+//   const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
+//   const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
 
-  userHelper.addChat(chatData, (id) => {
-    // Redirect to /single-chat/:id after adding chat
-    res.redirect(`/single-chat/${tutorId}`);
+//   const chatData = {
+//     ...req.body,
+//     tutorId,
+//     userId,
+//   };
+
+//   userHelper.addChat(chatData, (id) => {
+//     // Redirect to /single-chat/:id after adding chat
+//     res.redirect(`/single-chat/${userId}`);
+//   });
+// });
+
+
+router.post("/reply", function (req, res) {
+  tutorHelper.addReply(req.body, (id) => {
+    res.redirect("/tutor/all-orders");
   });
 });
 
@@ -65,10 +86,16 @@ router.post("/add-chat", function (req, res) {
 router.get("/all-orders", verifySignedIn, async function (req, res) {
   let tutor = req.session.tutor;
   let orders = await adminHelper.getAllOrders();
+  const ordersWithProducts = await Promise.all(
+    orders.map(async (order) => {
+      let products = await userHelper.getOrderProducts(order._id);
+      return { ...order, products };
+    })
+  );
   res.render("tutor/all-orders", {
     admin: false,
     tutor,
-    orders,
+    orders: ordersWithProducts,
   });
 });
 

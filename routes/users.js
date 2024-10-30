@@ -1,5 +1,7 @@
 var express = require("express");
 var userHelper = require("../helper/userHelper");
+var tutorHelper = require("../helper/tutorHelper");
+
 var router = express.Router();
 var db = require("../config/connection");
 var collections = require("../config/collections");
@@ -34,6 +36,61 @@ router.get("/profile", async function (req, res, next) {
 });
 
 
+router.get("/single-product/:id", async function (req, res) {
+  let user = req.session.user;
+  const productId = req.params.id;
+
+  try {
+    const product = await userHelper.getProductById(productId);
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+    const feedbacks = await userHelper.getFeedbackByProductId(productId); // Fetch feedbacks for the specific product
+
+    res.render("users/single-product", {
+      admin: false,
+      user,
+      product,
+      feedbacks
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+router.post("/add-feedback", async function (req, res) {
+  let user = req.session.user; // Ensure the user is logged in and the session is set
+  let feedbackText = req.body.text; // Get feedback text from form input
+  let username = req.body.username; // Get username from form input
+  let productId = req.body.productId; // Get product ID from form input
+  let tutorId = req.body.tutorId; // Get tutor ID from form input
+
+  if (!user) {
+    return res.status(403).send("User not logged in");
+  }
+
+  try {
+    const feedback = {
+      userId: ObjectId(user._id), // Convert user ID to ObjectId
+      productId: ObjectId(productId), // Convert product ID to ObjectId
+      tutorId: ObjectId(tutorId), // Convert tutor ID to ObjectId
+      text: feedbackText,
+      username: username,
+      createdAt: new Date() // Store the timestamp
+    };
+
+    await userHelper.addFeedback(feedback);
+    res.redirect("/single-product/" + productId); // Redirect back to the workspace page
+  } catch (error) {
+    console.error("Error adding feedback:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+
 
 router.get("/chat", async function (req, res, next) {
   let user = req.session.user;
@@ -51,8 +108,10 @@ router.get("/single-chat/:id", async function (req, res) {
     const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
     const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
     const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
+    const reply = await tutorHelper.getReply(); // Fetch chats for the specific tutor and user
 
-    res.render("users/single-chat", { admin: false, user, tutor, layout: "layout", products, chats });
+
+    res.render("users/single-chat", { admin: false, user, tutor, reply, layout: "layout", products, chats });
   } catch (error) {
     console.error("Error fetching tutor or products:", error);
     res.status(500).send("Server Error");

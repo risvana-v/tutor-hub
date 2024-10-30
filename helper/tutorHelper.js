@@ -5,6 +5,30 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
+
+  addReply: (reply, callback) => {
+    console.log(reply);
+    db.get()
+      .collection(collections.REPLY_COLLECTION)
+      .insertOne(reply)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  getReply: () => {
+    return new Promise(async (resolve, reject) => {
+      let reply = await db
+        .get()
+        .collection(collections.REPLY_COLLECTION)
+        .find()
+        .toArray();
+      resolve(reply);
+    });
+  },
+
+
   ///////ADD product/////////////////////                                         
   addproduct: (product, tutorId, callback) => {
     if (!tutorId || !objectId.isValid(tutorId)) {

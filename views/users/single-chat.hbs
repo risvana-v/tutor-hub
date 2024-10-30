@@ -39,18 +39,34 @@
 <div class="container-fluid chat-window">
     <!-- Chat messages area -->
     <div class="chat-messages">
-        {{#each chats}}
-        <div class="message">
-            <p><strong>{{this.name}}</strong> : {{this.msg}} </p>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h5>Your Message : </h5>
+                    <hr>
+                    {{#each chats}}
+                    <div class="message">
+                        <p><strong>{{this.name}}</strong> : {{this.msg}} </p>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h5>Tutor's Message : </h5>
+                    <hr>
+                    {{#each reply}}
+                    <div class="message">
+                        <p><strong>Tutor</strong> : {{this.msg}} </p>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
         </div>
 
-        {{/each}}
 
-        {{#each replies}}
-        <div class="message">
-            <p><strong>Staff</strong> : {{this.reply}} </p>
-        </div>
-        {{/each}}
+
 
         <!-- More messages can be added here -->
     </div>

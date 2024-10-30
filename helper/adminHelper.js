@@ -5,6 +5,31 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
+
+  getAllFeedbacks: () => {
+    return new Promise(async (resolve, reject) => {
+      let feedbacks = await db
+        .get()
+        .collection(collections.FEEDBACK_COLLECTION)
+        .find()
+        .toArray();
+      resolve(feedbacks);
+    });
+  },
+
+  addreply: (reply, callback) => {
+    console.log(reply);
+    reply.user = objectId(reply.user); // Convert userId to ObjectId
+
+    db.get()
+      .collection(collections.REPLY_COLLECTION)
+      .insertOne(reply)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
   getAllTutors: () => {
     return new Promise(async (resolve, reject) => {
       let tutors = await db
