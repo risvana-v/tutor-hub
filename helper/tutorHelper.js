@@ -176,7 +176,10 @@ module.exports = {
               Address: tutorDetails.Address,
               City: tutorDetails.City,
               Pincode: tutorDetails.Pincode,
-              qualifications: tutorDetails.qualifications,
+              qualification1: tutorDetails.qualification1,
+              qualification2: tutorDetails.qualification2,
+              qualification3: tutorDetails.qualification3,
+
 
             },
           }

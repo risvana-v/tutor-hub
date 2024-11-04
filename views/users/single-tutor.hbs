@@ -56,7 +56,8 @@
 
                                 <input class="form-control" type="number" name="Phone" value={{tutor.Phone}} readonly>
                             </div>
-                            {{!-- <div class="form-group">
+
+                            <div class="form-group">
                                 <label>Address</label>
                                 <textarea class="form-control" name="Address" readonly>{{tutor.Address}} </textarea>
                             </div>
@@ -77,7 +78,7 @@
                                             readonly>
                                     </div>
                                 </div>
-                            </div> --}}
+                            </div>
 
                         </form>
                     </div>
@@ -85,18 +86,36 @@
                 </div>
             </div>
 
-            <div class="row g-3 ">
+            <div class="col-lg-6">
+                <div class="card shadow p-4 mt-3">
+                    <img src="/images/profile-images/{{tutor._id}}.png" width="100px" alt="">
+                    <h5 class="mt-3 mb-2">Qualifications</h5>
+                    <div class="form-group">
+                        <label>Qualification</label>
+
+                        <input class="form-control" type="qualification1" name="qualification1"
+                            value={{tutor.qualification1}} readonly>
+                        <input class="form-control" type="qualification2" name="qualification2"
+                            value={{tutor.qualification2}} readonly>
+                        <input class="form-control" type="qualification3" name="qualification3"
+                            value={{tutor.qualification3}} readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class=" row g-3 ">
                 <!-- Single Top Product Card -->
                 {{#if user}}
                 {{#each products}}
-                <div class="col-6 col-sm-4 col-lg-4">
+                <div class=" col-6 col-sm-4 col-lg-4">
                     {{!-- <a href="/single-workspace/{{this._id}}"> --}}
                         <a href="#!">
 
                             <div class="card single-product-card">
                                 <div class="card-body p-3">
                                     <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
-                                            src="/images/subject-images/{{this._id}}.png" alt="">
+                                            src="/images/subject-images/{{this._id}}.png" width="300px" class="mb-3"
+                                            alt="">
                                         <!-- Badge --></a>
                                     <!-- Product Title -->
                                     <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
@@ -128,7 +147,8 @@
                             <div class="card single-product-card">
                                 <div class="card-body p-3">
                                     <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
-                                            src="/images/subject-images/{{this._id}}.png" alt="">
+                                            src="/images/subject-images/{{this._id}}.png" width="300px" class="mb-3"
+                                            alt="">
                                         <!-- Badge --></a>
                                     <!-- Product Title -->
                                     <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
@@ -159,3 +179,26 @@
 </div>
 
 <br><br>
+
+<script>
+    function addToCart(productId) {
+        $.ajax({
+            url: "/add-to-cart/" + productId,
+            method: "get",
+            success: (response) => {
+                if (response.status) {
+                    // Update cart count
+                    let count = $("#cart-count").html();
+                    count = parseInt(count) + 1;
+                    $("#cart-count").html(count);
+
+                    // Change button text and style
+                    let button = $("#add-to-cart-" + productId);
+                    button.html("Added to cart ✅");
+                    button.removeClass("btn-dark").addClass("btn-success");
+                    button.prop("disabled", true); // Optional: Disable the button after adding to cart
+                }
+            },
+        });
+    }
+</script>

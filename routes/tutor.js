@@ -177,6 +177,22 @@ router.post("/add-subject", function (req, res) {
   }
 });
 
+router.get("/all-users", verifySignedIn, async function (req, res) {
+  let tutor = req.session.tutor;
+  let orders = await adminHelper.getAllOrders();
+  const ordersWithProducts = await Promise.all(
+    orders.map(async (order) => {
+      let products = await userHelper.getOrderProducts(order._id);
+      return { ...order, products };
+    })
+  );
+  res.render("tutor/all-users", {
+    admin: false,
+    tutor,
+    orders: ordersWithProducts,
+  });
+});
+
 
 ///////EDIT product/////////////////////                                         
 router.get("/edit-subject/:id", verifySignedIn, async function (req, res) {
