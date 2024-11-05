@@ -102,16 +102,16 @@ router.get("/chat", async function (req, res, next) {
 
 router.get("/single-chat/:id", async function (req, res) {
   let user = req.session.user;
-  const tutorId = req.params.id; // Get tutor ID from URL
+  // const tutorId = req.params.id; // Get tutor ID from URL
 
   try {
-    const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
-    const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
-    const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
+    // const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+    // const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
+    // const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
     const reply = await tutorHelper.getReply(); // Fetch chats for the specific tutor and user
 
 
-    res.render("users/single-chat", { admin: false, user, tutor, reply, layout: "layout", products, chats });
+    res.render("users/single-chat", { admin: false, user, reply, layout: "layout" });
   } catch (error) {
     console.error("Error fetching tutor or products:", error);
     res.status(500).send("Server Error");

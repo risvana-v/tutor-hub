@@ -1,19 +1,16 @@
-<style>
-    /* Set chat window height to fill the screen */
+{{!-- <style>
     .chat-window {
         height: 100vh;
         display: flex;
         flex-direction: column;
     }
 
-    /* Chat messages area should take available space */
     .chat-messages {
         flex: 1;
         overflow-y: auto;
         padding: 20px;
     }
 
-    /* Fix input at the bottom */
     .chat-input {
         position: fixed;
         bottom: 0;
@@ -37,34 +34,89 @@
 </style>
 <br><br><br><br><br>
 <div class="container-fluid chat-window">
-    <!-- Chat messages area -->
     <div class="chat-messages">
-        {{#each chats}}
-        <div class="message">
-            <p><strong>{{this.name}}</strong> : {{this.msg}} </p>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h5>Your Message : </h5>
+                    <hr>
+                    {{#each chats}}
+                    <div class="message">
+                        <p><strong>{{this.name}}</strong> : {{this.msg}} </p>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card p-3">
+                    <h5>Tutor's Message : </h5>
+                    <hr>
+                    {{#each reply}}
+                    <div class="message">
+                        <p><strong>Tutor</strong> : {{this.msg}} </p>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
         </div>
 
-        {{/each}}
 
-        {{#each reply}}
-        <div class="message">
-            <p><strong>You</strong> : {{this.msg}} </p>
-        </div>
-        {{/each}}
 
-        <!-- More messages can be added here -->
+
     </div>
 
-    <!-- Fixed input area at the bottom -->
-    <form action="/tutor/reply" method="post">
+    <form action="/add-chat" method="post">
+        <input type="hidden" name="tutorId" value="{{tutor._id}}" />
 
         <div class="chat-input">
             <div class="input-group">
-                <input type="text" name="name" value={{tutor.tutorname}}>
+                <input type="hidden" name="userId" value={{user._id}}>
+                <input type="hidden" name="name" value={{user.Fname}}>
                 <input type="text" class="form-control" name="msg" placeholder="Type your message..."
                     aria-label="Type your message">
                 <button class="btn btn-primary" type="submit">Send</button>
             </div>
         </div>
     </form>
+</div> --}}
+
+
+<!-- Chatra {literal} -->
+<style>
+    /* Center the Chatra widget on the screen */
+    .chatra {
+        position: fixed !important;
+        bottom: 50% !important;
+        right: 50% !important;
+        transform: translate(50%, 50%);
+        z-index: 9999;
+        /* Ensures the widget is on top of other elements */
+    }
+</style>
+
+<div class="container-fluid">
 </div>
+
+
+<script>
+    (function (d, w, c) {
+        w.ChatraID = 'AwuBE9uNYfjNjZe6X';
+
+        // Define user data
+        w.ChatraSetup = {
+            // Set visitor name and email if logged in
+            // These values will pre-fill Chatra’s form fields if required
+            name: '{{user.Fname}}',  // User's name from the session
+            email: '{{user.Email}}' // User's email from the session
+        };
+
+        var s = d.createElement('script');
+        w[c] = w[c] || function () {
+            (w[c].q = w[c].q || []).push(arguments);
+        };
+        s.async = true;
+        s.src = 'https://call.chatra.io/chatra.js';
+        if (d.head) d.head.appendChild(s);
+    })(document, window, 'Chatra');
+</script>
