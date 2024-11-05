@@ -319,11 +319,11 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
 
 
 
-router.get("/placed-approval", function (req, res) {
+router.get("/pending-approval", function (req, res) {
   if (!req.session.signedIntutor || req.session.tutor.approved) {
     res.redirect("/tutor");
   } else {
-    res.render("tutor/placed-approval", {
+    res.render("tutor/pending-approval", {
       tutor: true, layout: "empty",
     });
   }
@@ -396,7 +396,7 @@ router.post("/signup", async function (req, res) {
       // Set session and redirect to placed approval
       req.session.signedIntutor = true;
       req.session.tutor = response;
-      res.redirect("/tutor/placed-approval");
+      res.redirect("/tutor/pending-approval");
     })
     .catch((err) => {
       console.log("Error during signup:", err);
