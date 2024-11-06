@@ -6,27 +6,84 @@ const objectId = require("mongodb").ObjectID;
 module.exports = {
 
 
-  addReply: (reply, callback) => {
-    console.log(reply);
-    db.get()
-      .collection(collections.REPLY_COLLECTION)
-      .insertOne(reply)
-      .then((data) => {
-        console.log(data);
-        callback(data.ops[0]._id);
-      });
-  },
-
-  getReply: () => {
+  // Fetch chat messages based on tutorId and userId
+  getChatMessagesByTutorAndUser: (tutorId, userId) => {
     return new Promise(async (resolve, reject) => {
-      let reply = await db
-        .get()
-        .collection(collections.REPLY_COLLECTION)
-        .find()
-        .toArray();
-      resolve(reply);
+      try {
+        const chats = await db.get()
+          .collection(collections.CHATS_COLLECTION)
+          .find({
+            $or: [
+              { tutorId: objectId(tutorId), userId: objectId(userId) },
+              { tutorId: objectId(userId), userId: objectId(tutorId) }
+            ]
+          })
+          .sort({ timestamp: 1 }) // Sort by timestamp to display messages in order
+          .toArray();
+
+        resolve(chats);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
+
+
+  // Fetch chat messages between a specific user and tutor
+  getChatBetweenUserAndTutor: (userId, tutorId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const chats = await db.get()
+          .collection(collections.CHATS_COLLECTION)
+          .find({
+            userId: objectId(userId),
+            tutorId: objectId(tutorId)
+          })
+          .toArray();
+        resolve(chats);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+  // Save a chat message
+  addChatMessage: (chatData) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.CHATS_COLLECTION)
+        .insertOne(chatData)
+        .then((data) => {
+          resolve(data.insertedId);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+
+
+  // addReply: (reply, callback) => {
+  //   console.log(reply);
+  //   db.get()
+  //     .collection(collections.REPLY_COLLECTION)
+  //     .insertOne(reply)
+  //     .then((data) => {
+  //       console.log(data);
+  //       callback(data.ops[0]._id);
+  //     });
+  // },
+
+  // getReply: () => {
+  //   return new Promise(async (resolve, reject) => {
+  //     let reply = await db
+  //       .get()
+  //       .collection(collections.REPLY_COLLECTION)
+  //       .find()
+  //       .toArray();
+  //     resolve(reply);
+  //   });
+  // },
 
 
   ///////ADD product/////////////////////                                         

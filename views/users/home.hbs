@@ -146,8 +146,7 @@
 
                                 <p>Provided By : {{this.tutorname}}</p>
                                 <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
-                                    class="btn btn-sm btn-dark">Add
-                                    to cart</button>
+                                    class="btn btn-sm btn-dark">Buy Now</button>
                                 <a href="/single-product/{{this._id}}"
                                     class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
                                     Details</a>
@@ -1055,8 +1054,15 @@
                     button.html("Added to cart ✅");
                     button.removeClass("btn-dark").addClass("btn-success");
                     button.prop("disabled", true); // Optional: Disable the button after adding to cart
+
+                    // Redirect to /cart after adding to cart
+                    window.location.href = "/cart";
                 }
             },
+            error: (err) => {
+                console.error("Error adding to cart:", err);
+                // You can show an error message here if needed
+            }
         });
     }
 </script>
