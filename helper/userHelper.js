@@ -80,15 +80,31 @@ module.exports = {
     });
   },
 
+  // getChatwithId: (tutorId) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const feedbacks = await db.get()
+  //         .collection(collections.CHATS_COLLECTION)
+  //         .find({ tutorId: objectId(tutorId) }) // Convert workspaceId to ObjectId
+  //         .toArray();
+
+  //       resolve(feedbacks);
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   });
+  // },
+
   getChatwithId: (tutorId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const feedbacks = await db.get()
+        const messages = await db.get()
           .collection(collections.CHATS_COLLECTION)
-          .find({ tutorId: objectId(tutorId) }) // Convert workspaceId to ObjectId
+          .find({ tutorId: new objectId(tutorId) })
+          .sort({ timestamp: 1 }) // Sort by timestamp in ascending order
           .toArray();
 
-        resolve(feedbacks);
+        resolve(messages);
       } catch (error) {
         reject(error);
       }
@@ -97,15 +113,41 @@ module.exports = {
 
 
 
-  addChat: (chat, callback) => {
-    console.log(chat);
+
+
+  // addChat: (chat, callback) => {
+  //   console.log(chat);
+  //   db.get()
+  //     .collection(collections.CHATS_COLLECTION)
+  //     .insertOne(chat)
+  //     .then((data) => {
+  //       console.log(data);
+  //       callback(data.ops[0]._id);
+  //     });
+  // },
+
+  getUserById: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = await db.get()
+          .collection(collections.USERS_COLLECTION)
+          .findOne({ _id: objectId(userId) }); // Find user by their ObjectId
+        resolve(user);
+      } catch (error) {
+        console.error("Error fetching user by ID:", error);
+        reject(error);
+      }
+    });
+  },
+
+  addChat: (chatData, callback) => {
     db.get()
       .collection(collections.CHATS_COLLECTION)
-      .insertOne(chat)
+      .insertOne(chatData)
       .then((data) => {
-        console.log(data);
-        callback(data.ops[0]._id);
-      });
+        callback(data.insertedId);
+      })
+      .catch((error) => console.error('Error inserting chat message:', error));
   },
 
   ///////GET ALL product/////////////////////                                            

@@ -81,42 +81,139 @@
     </form>
 </div> --}}
 
-
-<!-- Chatra {literal} -->
 <style>
-    /* Center the Chatra widget on the screen */
-    .chatra {
-        position: fixed !important;
-        bottom: 50% !important;
-        right: 50% !important;
-        transform: translate(50%, 50%);
-        z-index: 9999;
-        /* Ensures the widget is on top of other elements */
+    /* General Styles */
+    .chat-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        margin-top: 20px;
+        flex-direction: column;
+        height: 95vh;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Message Styling */
+    .message {
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        position: relative;
+    }
+
+    .message-user {
+        align-self: flex-start;
+        background-color: #e0f7fa;
+        border-top-left-radius: 0;
+    }
+
+    .message-tutor {
+        align-self: flex-end;
+        background-color: #d1c4e9;
+        border-top-right-radius: 0;
+    }
+
+    .message-content {
+        word-wrap: break-word;
+    }
+
+    /* Username and Time Styling */
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .username {
+        font-size: 1rem;
+        color: #00796b;
+    }
+
+    .message-time {
+        font-size: 0.7rem;
+        color: #666;
+    }
+
+    /* Chat Form Styling */
+    .chat-form {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    .chat-form textarea {
+        flex: 1;
+        padding: 10px;
+        border-radius: 5px;
+        resize: none;
+        border: 1px solid #ccc;
+    }
+
+    .send-btn {
+        padding: 10px 20px;
+    }
+
+    /* Responsive Styling */
+    @media (max-width: 600px) {
+        .message {
+            max-width: 80%;
+        }
+
+        .chat-container {
+            height: 75vh;
+        }
+
+        .send-btn {
+            padding: 8px 16px;
+        }
     }
 </style>
 
-<div class="container-fluid">
+<!-- Chat Container -->
+<div class="chat-container">
+    <!-- Messages List -->
+    <a href="/orders" class="btn btn-dark btn-sm w-25 mb-4">back</a>
+
+    <h5>Chat With Your Tutor</h5>
+    <br>
+    <div class="messages">
+        {{#each chats}}
+        <div class="message {{#if (eq sender 'tutor')}}message-tutor{{else}}message-user{{/if}}">
+            <div class="">
+                <span class="username">{{username}}</span> <!-- Display the username --> <br>
+                <span class="message-time">{{formatDate timestamp}}</span>
+            </div><br>
+            <div class="message-content">
+                <p>{{message}}</p>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- Chat Form for Tutor's Reply -->
+    <form action="/add-chat" method="POST" class="chat-form">
+        <input type="hidden" name="userId" value="{{user._id}}">
+        <input type="hidden" name="tutorId" value="{{tutor._id}}">
+        <textarea name="message" placeholder="Type your message..." required></textarea>
+        <button type="submit" class="send-btn btn btn-primary">Send</button>
+    </form>
 </div>
-
-
-<script>
-    (function (d, w, c) {
-        w.ChatraID = '3LZ4smWtAAs8rH3wP';
-
-        // Define user data
-        w.ChatraSetup = {
-            // Set visitor name and email if logged in
-            // These values will pre-fill Chatra’s form fields if required
-            name: '{{user.Fname}}',  // User's name from the session
-            email: '{{user.Email}}' // User's email from the session
-        };
-
-        var s = d.createElement('script');
-        w[c] = w[c] || function () {
-            (w[c].q = w[c].q || []).push(arguments);
-        };
-        s.async = true;
-        s.src = 'https://call.chatra.io/chatra.js';
-        if (d.head) d.head.appendChild(s);
-    })(document, window, 'Chatra');
-</script>

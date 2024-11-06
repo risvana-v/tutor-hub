@@ -37,26 +37,81 @@ router.get("/all-feedbacks", verifySignedIn, function (req, res) {
 
 
 
-router.get("/single-chat/:userId", async function (req, res) {
-  // const tutorId = req.params.tutorId; // Get tutor ID from URL
-  const userId = req.params.userId; // Get user ID from URL
+// GET route for tutor to view chat with a specific user
+router.get("/single-chat/:userId", verifySignedIn, async (req, res) => {
+  const tutorId = req.session.tutor._id; // Assuming tutor's ID is in the session
+  const userId = req.params.userId;
+
 
   try {
-    let tutor = req.session.tutor;
+    // Fetch chat messages based on tutorId and userId
+    const chats = await tutorHelper.getChatMessagesByTutorAndUser(tutorId, userId);
 
-    // const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
-    // const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
-    const chats = await userHelper.getChatWithIdBoth(userId); // Fetch chats for the specific tutor and user
-    const reply = await tutorHelper.getReply(); // Fetch chats for the specific tutor and user
+    // Fetch tutor and user details
+    const tutor = await userHelper.getTutorById(tutorId);
+    const user = await userHelper.getUserById(userId);
 
-    console.log("chattttttttt", chats)
-    res.render("tutor/single-chat", { admin: false, tutor, chats, reply });
+    // Format chat messages to include user and tutor names
+    chats.forEach(chat => {
+      if (chat.sender === 'users') {
+        chat.username = user.Fname; // Add the user name if the message is from the user
+      } else if (chat.sender === 'tutor') {
+        chat.username = tutor.Tutorname; // Add the tutor name if the message is from the tutor
+      }
+    });
 
+    // Render the chat page with tutor, user, and chat data
+    res.render("tutor/single-chat", { tutor, user, chats });
   } catch (error) {
-    console.error("Error fetching tutor, products, or chats:", error);
+    console.error("Error fetching tutor or chats:", error);
     res.status(500).send("Server Error");
   }
 });
+
+// POST route for tutor to add a reply in the chat
+router.post("/add-chat", async (req, res) => {
+  const tutorId = req.session.tutor._id;
+  const userId = req.body.userId;
+
+  const chatData = {
+    tutorId: new ObjectId(tutorId),
+    userId: new ObjectId(userId),
+    message: req.body.message,
+    sender: "tutor", // Indicate who sent the message
+    timestamp: new Date(),
+  };
+
+  try {
+    await tutorHelper.addChatMessage(chatData);
+    res.redirect(`/tutor/single-chat/${userId}`);
+  } catch (error) {
+    console.error("Error sending message:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+
+// router.get("/single-chat/:userId", async function (req, res) {
+//   // const tutorId = req.params.tutorId; // Get tutor ID from URL
+//   const userId = req.params.userId; // Get user ID from URL
+
+//   try {
+//     let tutor = req.session.tutor;
+
+//     // const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+//     // const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
+//     const chats = await userHelper.getChatWithIdBoth(userId); // Fetch chats for the specific tutor and user
+//     const reply = await tutorHelper.getReply(); // Fetch chats for the specific tutor and user
+
+//     console.log("chattttttttt", chats)
+//     res.render("tutor/single-chat", { admin: false, tutor, chats, reply });
+
+//   } catch (error) {
+//     console.error("Error fetching tutor, products, or chats:", error);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 
 // router.post("/reply", function (req, res) {
@@ -76,11 +131,11 @@ router.get("/single-chat/:userId", async function (req, res) {
 // });
 
 
-router.post("/reply", function (req, res) {
-  tutorHelper.addReply(req.body, (id) => {
-    res.redirect("/tutor/all-orders");
-  });
-});
+// router.post("/reply", function (req, res) {
+//   tutorHelper.addReply(req.body, (id) => {
+//     res.redirect("/tutor/all-orders");
+//   });
+// });
 
 
 router.get("/all-orders", verifySignedIn, async function (req, res) {

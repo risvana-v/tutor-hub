@@ -100,39 +100,93 @@ router.get("/chat", async function (req, res, next) {
 });
 
 
-router.get("/single-chat/:id", async function (req, res) {
-  let user = req.session.user;
-  // const tutorId = req.params.id; // Get tutor ID from URL
+// router.get("/single-chat/:id", async function (req, res) {
+//   let user = req.session.user;
+//   const tutorId = req.params.id; // Get tutor ID from URL
+
+//   try {
+//     const chats = await userHelper.getChatwithId(tutorId);
+//     const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
+
+//     res.render("users/single-chat", { admin: false, user, reply, layout: "layout", chats, tutor });
+//   } catch (error) {
+//     console.error("Error fetching tutor or products:", error);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
+router.get("/single-chat/:id", verifySignedIn, async function (req, res) {
+  const user = req.session.user;
+  const tutorId = req.params.id; // Get tutor ID from URL
 
   try {
-    // const tutor = await userHelper.getTutorById(tutorId); // Fetch tutor details
-    // const products = await userHelper.getProductsByTutorId(tutorId); // Fetch products by tutor ID
-    // const chats = await userHelper.getChatwithId(tutorId); // Fetch feedbacks for the specific workspace
-    const reply = await tutorHelper.getReply(); // Fetch chats for the specific tutor and user
+    const chats = await userHelper.getChatwithId(tutorId); // Fetch chat messages with tutor
+    const tutor = await userHelper.getTutorById(tutorId);  // Fetch tutor details
 
-
-    res.render("users/single-chat", { admin: false, user, reply, layout: "layout" });
+    res.render("users/single-chat", { admin: false, user, layout: "empty", chats, tutor });
   } catch (error) {
-    console.error("Error fetching tutor or products:", error);
+    console.error("Error fetching tutor or chats:", error);
     res.status(500).send("Server Error");
   }
 });
 
-router.post("/add-chat", function (req, res) {
-  const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
-  const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
+// Route for adding a chat message
+router.post("/add-chat", async (req, res) => {
+  let user = req.session.user;
+  const tutorId = req.body.tutorId;
+  const userId = req.session.user._id;
+  const message = req.body.message;
+  const userName = req.session.user.Fname; // Get the user's first name from session
+
 
   const chatData = {
-    ...req.body,
-    tutorId,
-    userId,
+    tutorId: new ObjectId(tutorId),
+    userId: new ObjectId(userId),
+    message: message,
+    sender: userName, // Mark the sender as user
+    timestamp: new Date(),
   };
 
-  userHelper.addChat(chatData, (id) => {
-    // Redirect to /single-chat/:id after adding chat
+  try {
+    // Insert chat data into the database
+    await userHelper.addChat(chatData);
+
+    // Redirect to the chat page with the tutorId
     res.redirect(`/single-chat/${tutorId}`);
-  });
+  } catch (error) {
+    console.error('Error adding chat message:', error);
+    res.status(500).send('Error sending message');
+  }
 });
+
+
+// router.get("/api/chat-messages/:tutorId", async (req, res) => {
+//   const tutorId = req.params.tutorId;
+//   const userId = req.session.user._id; // User ID from the session
+
+//   try {
+//     const chats = await userHelper.getChatMessagesByTutorAndUser(tutorId, userId);
+//     res.json(chats); // Send back the chat messages
+//   } catch (error) {
+//     console.error('Error fetching chat messages:', error);
+//     res.status(500).send('Error fetching messages');
+//   }
+// });
+
+// router.post("/add-chat", function (req, res) {
+//   const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
+//   const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
+
+//   const chatData = {
+//     ...req.body,
+//     tutorId,
+//     userId,
+//   };
+
+//   userHelper.addChat(chatData, (id) => {
+//     res.redirect(`/single-chat/${tutorId}`);
+//   });
+// });
 
 
 
@@ -534,5 +588,46 @@ router.post("/search", verifySignedIn, async function (req, res) {
     res.render("users/search-result", { admin: false, user, cartCount, response });
   });
 });
+
+
+
+
+/////////////////////
+router.get('/api/chat-messages/:tutorId', async function (req, res) {
+  const tutorId = req.params.tutorId;
+
+  try {
+    const messages = await userHelper.getChatwithId(tutorId);
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+
+// router.post('/add-chat', async (req, res) => {
+//   const { tutorId, message } = req.body;
+//   const userId = req.session.user._id;
+//   const userName = req.session.user.Fname; // Get the user's first name from session
+
+
+//   const chatData = {
+//     tutorId: new ObjectId(tutorId),
+//     userId: new ObjectId(userId),
+//     sender: userName, // Assuming user session includes `name`
+//     message,
+//     timestamp: new Date(),
+//   };
+
+//   try {
+//     await userHelper.addChat(chatData);
+//     res.status(200).json({ success: true });
+//   } catch (error) {
+//     console.error('Error adding chat message:', error);
+//     res.status(500).json({ error: 'Could not send message' });
+//   }
+// });
+
 
 module.exports = router;
