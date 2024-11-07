@@ -29,11 +29,13 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
-router.get("/all-feedbacks", verifySignedIn, function (req, res) {
+
+
+router.get("/all-feedbacks", verifySignedIn, async function (req, res) {
   let administator = req.session.admin;
-  adminHelper.getAllFeedbacks().then((feedbacks) => {
-    res.render("admin/all-feedbacks", { admin: true, feedbacks, layout: 'admin', administator });
-  });
+  let feedbacks = await adminHelper.getAllFeedbacks();
+  let Replies = await adminHelper.getAllRelies();
+  res.render("admin/all-feedbacks", { admin: true, feedbacks, Replies, layout: 'admin', administator });
 });
 
 router.get("/add-reply", verifySignedIn, async function (req, res) {

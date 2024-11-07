@@ -1,6 +1,7 @@
 var db = require("../config/connection");
 var collections = require("../config/collections");
 var bcrypt = require("bcrypt");
+const { log } = require("handlebars");
 const objectId = require("mongodb").ObjectID;
 
 module.exports = {
@@ -425,16 +426,31 @@ module.exports = {
     });
   },
 
-  getAllOrders: () => {
+  getAllOrders: (tutorId) => {
     return new Promise(async (resolve, reject) => {
-      let orders = await db
-        .get()
-        .collection(collections.ORDER_COLLECTION)
-        .find()
-        .toArray();
-      resolve(orders);
+      try {
+        // Ensure tutorId is in ObjectId format
+        let objectIdTutorId = objectId(tutorId);
+
+        console.log("Querying with tutorId:", objectIdTutorId);
+
+        let orders = await db
+          .get()
+          .collection(collections.ORDER_COLLECTION)
+          .find({ "product.tutorId": new objectId(tutorId) })
+          .sort({ "date": -1 }) // Sort by nested date field in descending order
+          // Adjust for nested structure
+          .toArray();
+
+        console.log("Fetched Orders:", orders);  // Log orders to see if it's correct
+        resolve(orders);
+      } catch (error) {
+        console.log("Error fetching orders:", error); // Log any errors
+        reject(error);
+      }
     });
   },
+
 
   changeStatus: (status, orderId) => {
     return new Promise((resolve, reject) => {

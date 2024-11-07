@@ -4,38 +4,48 @@
         {{!-- <a href="/tutor/cancel-all-orders" onclick="return confirm('Are You Sure to Cancel All Orders ?')"
             class="btn btn-danger mb-2">Cancel All Orders</a> --}}
 
-        <h3 class="mt-3 mb-2">All Users</h3>
+        <h3 class="mt-3 mb-2">All User</h3>
 
         <div class="table-responsive" style="overflow: visible;">
             <table class="table" id="table">
                 <thead class="table-dark">
                     <tr class="align-middle">
-                        {{!-- <th scope="col">Date</th> --}}
+                        <th scope="col">No</th>
+                        <th scope="col">Date</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Mobile</th>
-                        {{!-- <th scope="col">Amount</th>
-                        <th scope="col">Payment</th> --}}
-                        <th scope="col">Status</th>
-                        {{!-- <th scope="col">Cancel</th>
-                        <th scope="col">View</th> --}}
+                        <th scope="col">Details of student</th>
+
+                        <th scope="col">Chat</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     {{#each orders}}
-                    <tr class="align-middle">
-                        {{!-- <td>{{this.orderObject.date}}</td> --}}
-                        <td>{{this.orderObject.deliveryDetails.name}}</td>
-                        {{!-- <td>{{this.orderObject.userId}}</td> --}}
-
-                        <td>{{this.orderObject.deliveryDetails.email}}</td>
-                        <td>{{this.orderObject.deliveryDetails.mobile}}</td>
+                    <tr class="">
+                        <td>{{incremented @index}}</td>
+                        <td>{{formatDate this.date}}</td>
+                        <td>{{this.user.Fname}} {{this.user.Lname}}</td>
 
                         <td>
-                            {{this.orderObject.status}}
+                            <ul class="p-0">
+                                <li><b>Email : </b>{{this.user.Email}}</li>
+                                <li><b>Address : </b>{{this.deliveryDetails.Address}}
+                                </li>
+                                <li><b>Phone : </b>{{this.deliveryDetails.Phone}}</li>
+                                <li><b>Pincode : </b>{{this.deliveryDetails.Pincode}}
+                                </li>
+
+
+                            </ul>
                         </td>
 
+                        <td>
+
+                            <a href="/tutor/single-chat/{{this.userId}}" class="btn btn-primary">Chat with
+                                user</a>
+
+
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>

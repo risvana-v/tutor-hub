@@ -10,52 +10,61 @@
             <table class="table" id="table">
                 <thead class="table-dark">
                     <tr class="align-middle">
-                        {{!-- <th scope="col">Date</th> --}}
+                        <th scope="col">No</th>
+                        <th scope="col">Date</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Mobile</th>
+                        <th scope="col">Details of student</th>
+                        <th scope="col">Course Name</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Payment</th>
                         <th scope="col">Status</th>
                         <th scope="col">Cancel</th>
-                        <th scope="col">View</th>
+                        {{!-- <th scope="col">View</th> --}}
                         <th scope="col">Chat</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     {{#each orders}}
-                    <tr class="align-middle">
-                        {{!-- <td>{{this.orderObject.date}}</td> --}}
-                        <td>{{this.orderObject.deliveryDetails.name}}</td>
-                        {{!-- <td>{{this.orderObject.userId}}</td> --}}
+                    <tr class="">
+                        <td>{{incremented @index}}</td>
+                        <td>{{formatDate this.date}}</td>
+                        <td>{{this.user.Fname}} {{this.user.Lname}}</td>
 
-                        <td>{{this.orderObject.deliveryDetails.email}}</td>
-                        <td>{{this.orderObject.deliveryDetails.mobile}}</td>
-                        <td>{{this.orderObject.totalAmount}}/-</td>
-                        <td>{{this.orderObject.paymentMethod}}</td>
+                        <td>
+                            <ul class="p-0">
+                                <li><b>Email : </b>{{this.user.Email}}</li>
+                                <li><b>Address : </b>{{this.deliveryDetails.Address}}
+                                </li>
+                                <li><b>Phone : </b>{{this.deliveryDetails.Phone}}</li>
+                                <li><b>Pincode : </b>{{this.deliveryDetails.Pincode}}
+                                </li>
+
+
+                            </ul>
+                        </td>
+                        <td>
+                            {{this.product.name}}
+
+
+                        </td>
+                        <td>{{this.totalAmount}}/-</td>
+                        <td class="payment-method">{{this.paymentMethod}}</td>
+
                         <td>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{this.orderObject.status}}
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{this.status}}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                     <li><a class="dropdown-item"
-                                            href="/tutor/change-status/?status=Accepted&orderId={{this._id}}">Accept</a>
+                                            href="/tutor/change-status/?status=Accepted&orderId={{this._id}}">Accepted</a>
                                     </li>
                                     <li><a class="dropdown-item"
-                                            href="/tutor/change-status/?status=Rejected&orderId={{this._id}}">Reject</a>
+                                            href="/tutor/change-status/?status=Rejected&orderId={{this._id}}">Rejected</a>
                                     </li>
-                                    {{!-- <li><a class="dropdown-item"
-                                            href="/tutor/change-status/?status=shipped&orderId={{this._id}}">shipped</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            href="/tutor/change-status/?status=delivering&orderId={{this._id}}">delivering</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            href="/tutor/change-status/?status=delivered&orderId={{this._id}}">delivered</a>
-                                    </li> --}}
+
                                 </ul>
                             </div>
                         </td>
@@ -65,17 +74,10 @@
                                 class="btn btn-danger">Cancel</a>
                         </td>
                         <td>
-                            <a href="/tutor/view-ordered-products/{{this._id}}" class="btn btn-primary">View Course</a>
-                        </td>
-                        <td>
 
-                            <a href="/tutor/single-chat/{{this.orderObject.userId}}" class="btn btn-primary">Chat with
+                            <a href="/tutor/single-chat/{{this.userId}}" class="btn btn-primary">Chat with
                                 user</a>
 
-                            {{!-- <a
-                                href="/tutor/single-chat/{{this.orderObject.userId}}/{{#each this.products}}{{this.tutorId}}{{/each}}"
-                                class="btn btn-primary">Chat with
-                                user</a> --}}
 
                         </td>
                     </tr>
