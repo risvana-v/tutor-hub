@@ -35,6 +35,12 @@ app.engine(
         const year = date.getFullYear();
         return `${day}-${month}-${year}`; // Return the formatted date
       },
+      formatTime: function (dateString) {
+        const date = new Date(dateString);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`; // Return the formatted time
+      },
       eq: function (a, b) {
         return a === b;
       }

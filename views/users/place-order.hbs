@@ -1,63 +1,85 @@
-<section>
-    <div class="container mt-5">
-        <form id="checkout-form">
-            <div class="row">
-                <div class="col-md-6 ">
-                    <h2>Enter Purchase details</h2><br>
-                    {{#each tutorIds}}
-                    <li>hiii : {{this}}</li>
-                    {{/each}}
-                    <div class="card shadow p-4">
-                        <input type="hidden" name="userId" id="userId" value={{user._id}} class="form-control"><br>
+<div class="page-content-wrapper py-3"><br><br> <br><br><br>
+    <div class="container-lg">
+        <!-- Checkout Wrapper -->
+        <div class="checkout-wrapper-area">
+            <form id="checkout-form">
+                <div class="row g-2">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
 
-                        <label for="">Name</label>
-                        <input type="text" name="name" id="name" value={{user.Fname}} class="form-control"><br>
-                        <label for="">Email</label>
-                        <input type="text" name="email" id="email" value={{user.Email}} class="form-control"><br>
-                        <label for="">Mobile number</label>
-                        <input type="text" name="mobile" id="mobile" value={{user.Phone}} class="form-control">
-                    </div>
+                                <h6 class="mb-3">Enter your billing details</h6>
+                                <input type="text" name="userId" value="{{user._id}}" hidden>
+                                <input type="hidden" name="productId" value="{{product._id}}">
 
-                </div>
-                <div class="col-md-6">
-                    <div class="container mt-5 ml-5 card shadow p-3">
-                        <h5 class="mt-4">Total amount: Rs. {{total}}/-</h5>
-                        <div class="payment">
-                            {{!-- <p>Payment Method</p> --}}
-                            {{!-- <label class="radio-inline">
-                                <input type="radio" name="payment-method" value="COD"> COD
-                            </label> --}}
-                            <label class="radio-inline ">
-                                <input type="hidden" name="payment-method" value="ONLINE" checked>
-                            </label>
-                            <button class="btn btn-primary float-right mt-2 w-100" type="submit">Pay
-                                {{total}}/-</button>
+                                <div class="form-group">
+                                    <input class="form-control mb-3" type="text" name="Fname"
+                                        value={{user.Fname}}{{user.Lname}} placeholder="Your full name">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control mb-3" type="number" name="Phone" value={{user.Phone}}
+                                        placeholder="Your Number">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control mb-3" type="email" name="Email" value={{user.Email}}
+                                        placeholder="Your email">
+                                </div>
+
+                                <div class="form-group">
+                                    <input class="form-control mb-3" type="text" name="Pincode"
+                                        placeholder="Postcode or ZIP" required>
+                                </div>
+
+                                {{!-- <div class="form-group">
+                                    <input class="form-control mb-3" type="text" name="City" value={{user.City}}
+                                        placeholder="City">
+                                </div> --}}
+                                <div class="form-group">
+                                    <textarea class="form-control mb-3" id="notes" name="Address" cols="30" rows="5"
+                                        placeholder="Address" required></textarea>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-2 p-4">
+                            <h6>Product Details</h6>
+                            <hr>
+                            <h6>
+                                <div class="mb-2"><b>Product Name :</b> {{product.name}}<br></div>
+                                <div class="mb-2"><b>Price :</b> {{product.Price}}/-<br></div>
+                                <hr>
+                                <div class="mb-2"><b>Total Price :</b> <span
+                                        class="text-danger">{{product.Price}}</span> /-<br></div>
 
-            </div>
-        </form>
+                            </h6>
+                        </div>
+                        <div class="card p-4">
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment-method" value="ONLINE"
+                                    checked>
+                                <label class="form-check-label" for="darkRadio2">Pay & Book</label>
+                            </div>
+
+                            <button class="btn btn-dark mt-3 w-100" type="submit">Book Now</button>
+            </form>
+        </div>
     </div>
-</section>
-<style>
-    label.radio-inline {
-        display: flex;
-        align-items: center;
-    }
+</div>
+</form>
+</div>
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    .checkout {
-        border: 1px solid;
-        border-radius: 3px;
-    }
-
-    .payment {
-        padding-bottom: 30px;
-    }
-</style>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+    // Your script that uses jQuery
     $("#checkout-form").submit((e) => {
+        console.log($("#checkout-form")); // Check if this returns a valid jQuery object
         e.preventDefault();
         $.ajax({
             url: '/place-order',
@@ -65,20 +87,26 @@
             data: $("#checkout-form").serialize(),
             success: (response) => {
                 if (response.codSuccess) {
-                    location.href = '/order-placed'
+                    location.href = '/order-placed';
                 } else {
-                    razorpayPayment(response)
+                    razorpayPayment(response);
                 }
+            },
+            error: (xhr, status, error) => {
+                console.error("Error placing order:", xhr.responseText);
+                alert("An error occurred while placing the order. Please try again.");
             }
-        })
-    })
+        });
+    });
 
+</script>
+<script>
     function razorpayPayment(order) {
         var options = {
             "key": "rzp_test_8NokNgt8cA3Hdv", // Enter the Key ID generated from the Dashboard
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             "currency": "INR",
-            "name": "Shopping Cart",
+            "name": "CoSpace",
             "description": "Test Transaction",
             "image": "https://example.com/your_logo",
             "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
@@ -86,9 +114,9 @@
                 verifyPayment(response, order)
             },
             "prefill": {
-                "name": "Gaurav Kumar",
-                "email": "gaurav.kumar@example.com",
-                "contact": "9999999999"
+                "name": "Shahala nushri",
+                "email": "shahalanushri9@gmail.com",
+                "contact": "8156867466"
             },
             "notes": {
                 "address": "Razorpay Corporate Office"

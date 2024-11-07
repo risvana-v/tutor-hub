@@ -1,26 +1,25 @@
 <section>
     <div class="container mt-2"><br><br>
         <a href="/orders" class="btn btn-dark">back</a>
-        {{#each products}}
         <br><br>
 
         <div class="card p-4 mx-auto">
             <div class="row">
                 <div class="col-lg-6">
-                    <img src="/images/subject-images/{{this.product._id}}.png" class="card-img-top" alt="phone-image"
-                        style="height: 17rem;">
+                    <img src="/images/subject-images/{{products.product._id}}.png" class="card-img-top"
+                        alt="phone-image" style="height: 17rem;">
                 </div>
                 <div class="col-lg-6">
                     <div class="card-body pb-1">
                         <div style="display: flex; justify-content: space-between;">
-                            <h5 class="card-title">{{this.product.name}}</h5>
-                            <p class="card-text"><small>₹{{this.product.Price}}</small></p>
+                            <h5 class="card-title">{{products.product.name}}</h5>
+                            <p class="card-text"><small>₹{{products.product.Price}}</small></p>
                         </div>
-                        <p class="card-text">{{this.product.desc}}</p><br>
+                        <p class="card-text">{{products.product.desc}}</p><br>
                         <h5>Tutor Details : </h5>
                         <hr>
-                        Tutor : {{this.product.tutorname}} <br>
-                        Email : {{this.product.tutoremail}}
+                        Tutor : {{products.product.tutorname}} <br>
+                        Email : {{products.product.tutoremail}}
 
 
 
@@ -34,7 +33,7 @@
             <div class="mt-3">
                 <div class="row">
                     <div class="col-lg-6">
-                        {{#each this.product.title}} <!-- Corrected this to reference name[] -->
+                        {{#each products.product.title}} <!-- Corrected this to reference name[] -->
                         {{this}}
                         ------------------------------------------------------------------------------------------------------
                         <br>
@@ -42,7 +41,7 @@
                     </div>
                     <br>
                     <div class="col-lg-6">
-                        {{#each this.product.link}} <!-- Corrected this to reference name[] -->
+                        {{#each products.product.link}} <!-- Corrected this to reference  -->
                         <a href="{{this}}" target="_blank" class="">View Video</a> <br>
                         {{/each}}
                     </div>
@@ -54,6 +53,5 @@
 
 
         </div>
-        {{/each}}
     </div>
 </section>

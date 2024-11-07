@@ -83,7 +83,7 @@ router.post("/add-feedback", async function (req, res) {
     };
 
     await userHelper.addFeedback(feedback);
-    res.redirect("/single-product/" + productId); // Redirect back to the workspace page
+    res.redirect("/single-product/" + productId); // Redirect back to the product page
   } catch (error) {
     console.error("Error adding feedback:", error);
     res.status(500).send("Server Error");
@@ -476,26 +476,38 @@ router.post("/remove-cart-product", (req, res, next) => {
   });
 });
 
-router.get("/place-order", verifySignedIn, async (req, res) => {
+router.get('/place-order/:id', verifySignedIn, async (req, res) => {
+  const productId = req.params.id;
+
+  // Validate the product ID
+  if (!ObjectId.isValid(productId)) {
+    return res.status(400).send('Invalid product ID format');
+  }
+
   let user = req.session.user;
-  let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
-  let total = await userHelper.getTotalAmount(userId);
-  res.render("users/place-order", { admin: false, user, cartCount, total });
+
+  // Fetch the product details by ID
+  let product = await userHelper.getProductDetails(productId);
+
+  // If no product is found, handle the error
+  if (!product) {
+    return res.status(404).send('Product not found');
+  }
+
+  // Render the place-order page with product details
+  res.render('users/place-order', { user, product });
 });
 
-router.post("/place-order", async (req, res) => {
+router.post('/place-order', async (req, res) => {
   let user = req.session.user;
+  let productId = req.body.productId;
 
-  // Convert userId to ObjectId
-  const userId = ObjectId(req.body.userId); // Ensure req.body.userId is a valid ObjectId string
+  // Fetch product details
+  let product = await userHelper.getProductDetails(productId);
+  let totalPrice = product.Price; // Get the price from the product
 
-  // Get cart products and total amount using the ObjectId
-  let products = await userHelper.getCartProductList(userId); // Pass ObjectId to your helper function
-  let totalPrice = await userHelper.getTotalAmount(userId); // Pass ObjectId to your helper function
-
-  userHelper
-    .placeOrder(req.body, products, totalPrice, user)
+  // Call placeOrder function
+  userHelper.placeOrder(req.body, product, totalPrice, user)
     .then((orderId) => {
       if (req.body["payment-method"] === "COD") {
         res.json({ codSuccess: true });
@@ -506,9 +518,8 @@ router.post("/place-order", async (req, res) => {
       }
     })
     .catch((err) => {
-      // Handle any errors
       console.error("Error placing order:", err);
-      res.status(500).json({ error: "Failed to place order" });
+      res.status(500).send("Internal Server Error");
     });
 });
 
@@ -560,18 +571,30 @@ router.get("/orders", verifySignedIn, async function (req, res) {
 // View Ordered Products Route
 router.get("/view-ordered-products/:id", verifySignedIn, async function (req, res) {
   let user = req.session.user;
-  let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
   let orderId = req.params.id;
-  let products = await userHelper.getOrderProducts(orderId);
 
-  res.render("users/order-products", {
-    admin: false,
-    user,
-    cartCount,
-    products,
-  });
+  // Log the orderId to see if it's correctly retrieved
+  console.log("Retrieved Order ID:", orderId);
+
+  // Check if orderId is valid
+  if (!ObjectId.isValid(orderId)) {
+    console.error('Invalid Order ID format:', orderId);  // Log the invalid ID
+    return res.status(400).send('Invalid Order ID');
+  }
+
+  try {
+    let products = await userHelper.getOrderProducts(orderId);
+    res.render("users/order-products", {
+      admin: false,
+      user,
+      products,
+    });
+  } catch (err) {
+    console.error('Error fetching ordered products:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
   let orderId = req.params.id;

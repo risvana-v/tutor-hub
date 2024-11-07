@@ -140,17 +140,21 @@ router.post("/add-chat", async (req, res) => {
 
 router.get("/all-orders", verifySignedIn, async function (req, res) {
   let tutor = req.session.tutor;
-  let orders = await adminHelper.getAllOrders();
-  const ordersWithProducts = await Promise.all(
-    orders.map(async (order) => {
-      let products = await userHelper.getOrderProducts(order._id);
-      return { ...order, products };
-    })
-  );
+
+  // Ensure you have the builder's ID available
+  let tutorId = tutor._id;
+  console.log("Type of tutorId:", typeof tutorId);  // Should be 'string'
+  console.log("Type of ObjectId tutorId:", typeof ObjectId(tutorId));  // Should be 'object'
+
+
+  // Pass tutorId to getAllOrders
+  let orders = await tutorHelper.getAllOrders(tutorId);
+
+
   res.render("tutor/all-orders", {
-    admin: false,
-    tutor,
-    orders: ordersWithProducts,
+    tutor: true,
+    orders,
+    tutor
   });
 });
 
@@ -162,7 +166,7 @@ router.get(
     let orderId = req.params.id;
     let products = await userHelper.getOrderProducts(orderId);
     res.render("tutor/order-products", {
-      admin: false,
+      tutor: true,
       tutor,
       products,
     });
@@ -234,17 +238,21 @@ router.post("/add-subject", function (req, res) {
 
 router.get("/all-users", verifySignedIn, async function (req, res) {
   let tutor = req.session.tutor;
-  let orders = await adminHelper.getAllOrders();
-  const ordersWithProducts = await Promise.all(
-    orders.map(async (order) => {
-      let products = await userHelper.getOrderProducts(order._id);
-      return { ...order, products };
-    })
-  );
+
+  // Ensure you have the builder's ID available
+  let tutorId = tutor._id;
+  console.log("Type of tutorId:", typeof tutorId);  // Should be 'string'
+  console.log("Type of ObjectId tutorId:", typeof ObjectId(tutorId));  // Should be 'object'
+
+
+  // Pass tutorId to getAllOrders
+  let orders = await tutorHelper.getAllOrders(tutorId);
+
+
   res.render("tutor/all-users", {
-    admin: false,
-    tutor,
-    orders: ordersWithProducts,
+    tutor: true,
+    orders,
+    tutor
   });
 });
 

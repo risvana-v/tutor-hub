@@ -17,9 +17,20 @@ module.exports = {
     });
   },
 
+  getAllRelies: () => {
+    return new Promise(async (resolve, reject) => {
+      let relies = await db
+        .get()
+        .collection(collections.REPLY_COLLECTION)
+        .find()
+        .toArray();
+      resolve(relies);
+    });
+  },
+
   addreply: (reply, callback) => {
     console.log(reply);
-    reply.user = objectId(reply.user); // Convert userId to ObjectId
+    // reply.user = objectId(reply.user); // Convert userId to ObjectId
 
     db.get()
       .collection(collections.REPLY_COLLECTION)
@@ -28,6 +39,21 @@ module.exports = {
         console.log(data);
         callback(data.ops[0]._id);
       });
+  },
+
+
+
+  addFeedbackReply: (feedback) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await db.get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .insertOne(feedback);
+        resolve(); // Resolve the promise on success
+      } catch (error) {
+        reject(error); // Reject the promise on error
+      }
+    });
   },
 
   getAllTutors: () => {
@@ -208,16 +234,21 @@ module.exports = {
     });
   },
 
-  getAllOrders: () => {
+  getAllOrders: (tutorId) => {
     return new Promise(async (resolve, reject) => {
-      let orders = await db
-        .get()
-        .collection(collections.ORDER_COLLECTION)
-        .find()
-        .toArray();
-      resolve(orders);
+      try {
+        let orders = await db
+          .get()
+          .collection(collections.ORDER_COLLECTION)
+          .find({ "orderObject.products.tutorId": objectId(tutorId) }) // Filter by tutorId in products
+          .toArray();
+        resolve(orders);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
+
 
   changeStatus: (status, orderId) => {
     return new Promise((resolve, reject) => {
@@ -227,7 +258,7 @@ module.exports = {
           { _id: objectId(orderId) },
           {
             $set: {
-              "orderObject.status": status,
+              "status": status,
             },
           }
         )

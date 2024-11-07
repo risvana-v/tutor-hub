@@ -2,6 +2,8 @@
     {{#if orders}}
     <div class="container my-5">
         <h3 class="mt-5 mb-3">My Courses</h3>
+
+
         <div class="table-responsive">
             <table class="table" id="table">
                 <thead class="table-dark">
@@ -21,30 +23,26 @@
                 <tbody>
                     {{#each orders}}
                     <tr class="align-middle">
-                        <td>{{formatDate this.orderObject.date}}</td>
+                        <td>{{formatDate this.date}}</td>
 
-                        {{#each this.products}}
-                        <td>{{this.product.name}}</td>
-                        {{/each}}
+                        <td>{{product.name}}</td>
 
-                        <td>{{this.orderObject.totalAmount}}/-</td>
-                        <td>{{this.orderObject.status}}</td>
+                        <td>{{this.totalAmount}}/-</td>
+                        <td>{{this.status}}</td>
 
                         <td>
                             <a href="/view-ordered-products/{{this._id}}" class="btn btn-primary">View Course</a>
                         </td>
 
                         <td>
-                            {{#each this.products}}
-                            {{#if (eq ../orderObject.status "placed")}}
+                            {{#if (eq this.status "pending")}}
                             <button class="btn btn-dark" disabled>Tutor is not accepted</button>
-                            {{else if (eq ../orderObject.status "Rejected")}}
-                            <button class="btn btn-dark" disabled>Tutor is Rejected your chat</button>
-                            {{else}}
+                            {{else if (eq this.status "Rejected")}}
+                            <button class="btn btn-dark" disabled>Tutor has rejected your chat</button>
+                            {{else if (eq this.status "Accepted")}}
                             <a href="/single-chat/{{this.tutorId}}" class="btn btn-dark">Chat with tutor</a>
                             {{/if}}
-                            {{/each}}
-                        </td>
+
 
                         </td>
                     </tr>

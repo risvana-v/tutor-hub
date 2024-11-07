@@ -49,7 +49,7 @@
         <div class="container">
             <div class="container-lg">
                 <h3 class="text-center mt-4">Our Top Tutors</h3>
-                <p class="text-center mb-4">"Find Your Ideal Subjects to Elevate Your Knowledge" </p>
+                <p class="text-center mb-4">"Find Your Ideal Tutors to Elevate Your Knowledge" </p>
                 <div class="card mb-4 w-100">
                     <div class="card-body w-100">
                         <div class="d-flex justify-content-between align-items-center">
@@ -129,7 +129,7 @@
             {{#if user}}
             {{#each products}}
             <div class="col-6 col-sm-4 col-lg-4">
-                {{!-- <a href="/single-workspace/{{this._id}}"> --}}
+                {{!-- <a href="/single-product/{{this._id}}"> --}}
                     <a href="/single-product/{{this._id}}">
 
                         <div class="card single-product-card">
@@ -145,8 +145,15 @@
                                 <p>Class For : {{this.class}}</p>
 
                                 <p>Provided By : {{this.tutorname}}</p>
+<<<<<<< HEAD
+                                {{!-- <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                                    class="btn btn-sm btn-dark">Buy Now</button> --}}
+                                <button class="btn btn-creative btn-dark btn-lg ct-btn buy-now"
+                                    data-id="{{this._id}}">Buy Now</button>
+=======
                                 <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
-                                    class="btn btn-sm btn-dark">Buy Now</button>
+                                    class="btn btn-sm btn-dark">Book Now</button>
+>>>>>>> eef6bf648997a4fa559809c0169482029b99ca01
                                 <a href="/single-product/{{this._id}}"
                                     class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
                                     Details</a>
@@ -162,7 +169,7 @@
             {{else}}
             {{#each products}}
             <div class="col-6 col-sm-4 col-lg-4">
-                {{!-- <a href="/single-workspace/{{this._id}}"> --}}
+                {{!-- <a href="/single-product/{{this._id}}"> --}}
                     <a href="/single-product/{{this._id}}">
 
                         <div class="card single-product-card">
@@ -181,7 +188,7 @@
                                 <a href="/single-product/{{this._id}}"
                                     class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
                                     Details</a>
-                                {{!-- <a href="/single-workspace/{{this._id}}"
+                                {{!-- <a href="/single-product/{{this._id}}"
                                     class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
                                     Details</a>
                                 <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
@@ -218,8 +225,35 @@
 
         </script>
         <script>
-            function buyNow(workspaceId) {
-                window.location.href = '/place-order/' + workspaceId;
+            document.addEventListener('DOMContentLoaded', function () {
+                const buyNowButtons = document.querySelectorAll('.buy-now');
+
+                buyNowButtons.forEach(button => {
+                    const seatsAvailable = parseInt(button.getAttribute('data-seats'), 10);
+
+                    if (seatsAvailable === 0) {
+                        button.disabled = true; // Disable the button if sold out
+                        button.textContent = 'Sold Out'; // Change the button text
+                        button.classList.add('disabled'); // Optionally add a disabled class for styling
+                    } else {
+                        button.addEventListener('click', function () {
+                            buyNow(button.getAttribute('data-id')); // Call the buyNow function
+                        });
+                    }
+                });
+            });
+
+            function buyNow(productId) {
+                // Your buy now logic here, for example:
+                alert('Buying product with ID: ' + productId);
+                // Implement your purchase logic (e.g., make an API call)
+            }
+        </script>
+
+
+        <script>
+            function buyNow(productId) {
+                window.location.href = '/place-order/' + productId;
             }
 
         </script>
