@@ -106,102 +106,128 @@
                 </div>
             </div>
 
-            <div class=" row g-3 ">
-                <!-- Single Top Product Card -->
-                {{#if user}}
-                {{#each products}}
-                <div class=" col-6 col-sm-4 col-lg-4">
-                    {{!-- <a href="/single-workspace/{{this._id}}"> --}}
-                        <a href="#!">
+        </div>
+        <br><br><br>
+        <h5>All Courses</h5>
+        <div class="row g-3 ">
+            <!-- Single Top Product Card -->
+            {{#if user}}
+            {{#each products}}
+            <div class="col-6 col-sm-4 col-lg-4">
+                {{!-- <a href="/single-product/{{this._id}}"> --}}
+                    <a href="/single-product/{{this._id}}">
 
-                            <div class="card single-product-card">
-                                <div class="card-body p-3">
-                                    <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
-                                            src="/images/subject-images/{{this._id}}.png" width="300px" class="mb-3"
-                                            alt="">
-                                        <!-- Badge --></a>
-                                    <!-- Product Title -->
-                                    <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
-                                    <!-- Product Price -->
-                                    <p class="sale-price">Rs.{{this.Price}} </p>
-                                    <hr>
-                                    <p>Provided By : {{this.tutorname}}</p>
-                                    <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
-                                        class="btn btn-sm btn-dark">Add
-                                        to cart</button>
-                                    {{!-- <a href="/single-workspace/{{this._id}}"
-                                        class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
-                                        Details</a>
-                                    <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
-                                        Now</button> --}}
+                        <div class="card single-product-card">
+                            <div class="card-body p-3">
+                                <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
+                                        src="/images/subject-images/{{this._id}}.png" alt="">
+                                    <!-- Badge --></a>
+                                <!-- Product Title -->
+                                <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
+                                <!-- Product Price -->
+                                <p class="sale-price">Rs.{{this.Price}} </p>
+                                <hr>
+                                <p>Class For : {{this.class}}</p>
 
-                                </div>
+                                <p>Provided By : {{this.tutorname}}</p>
+                                {{!-- <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                                    class="btn btn-sm btn-dark">Buy Now</button>
+                                --}}
+                                <button class="btn btn-creative btn-dark btn-sm ct-btn buy-now"
+                                    data-id="{{this._id}}">Buy Now</button>
+                                {{!--
+                                <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                                    class="btn btn-sm btn-dark">Buy Now</button> --}}
+                                <a href="/single-product/{{this._id}}"
+                                    class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
+                                    Details</a>
+                                {{!-- <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
+                                    Now</button> --}}
+
                             </div>
-                        </a>
-                </div>
-                {{/each}}
-
-                {{else}}
-                {{#each products}}
-                <div class="col-6 col-sm-4 col-lg-4">
-                    {{!-- <a href="/single-workspace/{{this._id}}"> --}}
-                        <a href="#!">
-
-                            <div class="card single-product-card">
-                                <div class="card-body p-3">
-                                    <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
-                                            src="/images/subject-images/{{this._id}}.png" width="300px" class="mb-3"
-                                            alt="">
-                                        <!-- Badge --></a>
-                                    <!-- Product Title -->
-                                    <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
-                                    <!-- Product Price -->
-                                    <p class="sale-price">Rs.{{this.Price}} </p>
-                                    <hr>
-                                    <p>Provided By : {{this.tutorname}}</p>
-                                    <a href="/signin" class="btn btn-sm btn-dark">Book now</a>
-                                    {{!-- <a href="/single-workspace/{{this._id}}"
-                                        class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
-                                        Details</a>
-                                    <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
-                                        Now</button> --}}
-
-                                </div>
-                            </div>
-                        </a>
-                </div>
-                {{/each}}
-                {{/if}}
-
-
+                        </div>
+                    </a>
             </div>
+            {{/each}}
+
+            {{else}}
+            {{#each products}}
+            <div class="col-6 col-sm-4 col-lg-4">
+                {{!-- <a href="/single-product/{{this._id}}"> --}}
+                    <a href="/single-product/{{this._id}}">
+
+                        <div class="card single-product-card">
+                            <div class="card-body p-3">
+                                <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
+                                        src="/images/subject-images/{{this._id}}.png" alt="">
+                                    <!-- Badge --></a>
+                                <!-- Product Title -->
+                                <h4 class="product-title d-block text-truncate" href="#!">{{this.name}}</h4>
+                                <!-- Product Price -->
+                                <p class="sale-price">Rs.{{this.Price}} </p>
+                                <hr>
+                                <p>Class For : {{this.class}}</p>
+                                <p>Provided By : {{this.tutorname}}</p>
+                                <a href="/signin" class="btn btn-sm btn-dark">Book now</a>
+                                <a href="/single-product/{{this._id}}"
+                                    class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
+                                    Details</a>
+                                {{!-- <a href="/single-product/{{this._id}}"
+                                    class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
+                                    Details</a>
+                                <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
+                                    Now</button> --}}
+
+                            </div>
+                        </div>
+                    </a>
+            </div>
+            {{/each}}
+            {{/if}}
+
+
         </div>
 
-
     </div>
+
+
+</div>
 </div>
 
 <br><br>
 
 <script>
-    function addToCart(productId) {
-        $.ajax({
-            url: "/add-to-cart/" + productId,
-            method: "get",
-            success: (response) => {
-                if (response.status) {
-                    // Update cart count
-                    let count = $("#cart-count").html();
-                    count = parseInt(count) + 1;
-                    $("#cart-count").html(count);
+    document.addEventListener('DOMContentLoaded', function () {
+        const buyNowButtons = document.querySelectorAll('.buy-now');
 
-                    // Change button text and style
-                    let button = $("#add-to-cart-" + productId);
-                    button.html("Added to cart ✅");
-                    button.removeClass("btn-dark").addClass("btn-success");
-                    button.prop("disabled", true); // Optional: Disable the button after adding to cart
-                }
-            },
+        buyNowButtons.forEach(button => {
+            const seatsAvailable = parseInt(button.getAttribute('data-seats'), 10);
+
+            if (seatsAvailable === 0) {
+                button.disabled = true; // Disable the button if sold out
+                button.textContent = 'Sold Out'; // Change the button text
+                button.classList.add('disabled'); // Optionally add a disabled class for styling
+            } else {
+                button.addEventListener('click', function () {
+                    buyNow(button.getAttribute('data-id')); // Call the buyNow function
+                });
+            }
         });
+    });
+
+    function buyNow(productId) {
+        // Your buy now logic here, for example:
+        alert('Buying product with ID: ' + productId);
+        // Implement your purchase logic (e.g., make an API call)
     }
 </script>
+
+
+<script>
+    function buyNow(productId) {
+        window.location.href = '/place-order/' + productId;
+    }
+
+</script>
+</div>
+</section>
