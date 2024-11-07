@@ -56,7 +56,7 @@
                         <hr>
                         {{#each feedbacks}}
                         <div class="card p-3 shadow mb-2">
-                            <p class="date-cell"><small>Submitted on {{ this.createdAt}}</small></p>
+                            <p class="date-cell"><small>Submitted on {{formatDate this.createdAt}}</small></p>
 
                             <p>
                                 <strong class="">{{this.username}}<br></strong>
