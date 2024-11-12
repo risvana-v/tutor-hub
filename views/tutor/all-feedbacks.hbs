@@ -11,8 +11,9 @@
                         <table class="table table-bordered" id="table">
                             <thead class="table-dark">
                                 <tr class="align-middle">
-                                    {{!-- <th scope="col">Date</th> --}}
+                                    <th scope="col">Date</th>
                                     <th scope="col">User Name</th>
+                                    <th scope="col">Subject Name</th>
                                     <th scope="col">Feedback</th>
                                     {{!-- <th scope="col">Rating</th> --}}
 
@@ -22,9 +23,11 @@
                             <tbody>
                                 {{#each feedbacks}}
                                 <tr class="align-middle">
-                                    {{!-- <td>{{this.orderObject.date}}</td> --}}
+                                    <td>{{formatDate this.createdAt}}</td>
 
                                     <td>{{this.username}}</td>
+                                    <td>{{this.sname}}</td>
+
                                     <td>{{this.text}}</td>
                                     {{!-- <td>{{this.rating}}</td> --}}
 

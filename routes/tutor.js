@@ -30,8 +30,13 @@ router.get("/", verifySignedIn, async function (req, res, next) {
 
 router.get("/all-feedbacks", verifySignedIn, function (req, res) {
   let tutor = req.session.tutor;
-  adminHelper.getAllFeedbacks().then((feedbacks) => {
+  let tutorId = tutor._id; // Assuming tutorId is stored as `_id` in the session
+
+  adminHelper.getAllFeedbacks(tutorId).then((feedbacks) => {
     res.render("tutor/all-feedbacks", { admin: false, feedbacks, tutor });
+  }).catch((error) => {
+    // Handle any potential error
+    res.status(500).send("Error fetching feedbacks");
   });
 });
 

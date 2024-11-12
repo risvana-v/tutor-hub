@@ -29,6 +29,14 @@ router.get("/", async function (req, res, next) {
   res.render("users/home", { admin: false, products, user, tutors, cartCount });
 });
 
+router.get("/chat-delete/:id", verifySignedIn, function (req, res) {
+  let tutorId = req.params.id;
+  userHelper.removeChat(tutorId).then(() => {
+    res.redirect("/orders");
+  });
+});
+
+
 ////////////////////PROFILE////////////////////////////////////
 router.get("/profile", async function (req, res, next) {
   let user = req.session.user;
@@ -67,6 +75,8 @@ router.post("/add-feedback", async function (req, res) {
   let username = req.body.username; // Get username from form input
   let productId = req.body.productId; // Get product ID from form input
   let tutorId = req.body.tutorId; // Get tutor ID from form input
+  const subname = req.body.sname;
+
 
   if (!user) {
     return res.status(403).send("User not logged in");
@@ -77,6 +87,7 @@ router.post("/add-feedback", async function (req, res) {
       userId: ObjectId(user._id), // Convert user ID to ObjectId
       productId: ObjectId(productId), // Convert product ID to ObjectId
       tutorId: ObjectId(tutorId), // Convert tutor ID to ObjectId
+      sname: subname,
       text: feedbackText,
       username: username,
       createdAt: new Date() // Store the timestamp
@@ -173,20 +184,12 @@ router.post("/add-chat", async (req, res) => {
 //   }
 // });
 
-// router.post("/add-chat", function (req, res) {
-//   const tutorId = new ObjectId(req.body.tutorId); // Convert tutorId to ObjectId
-//   const userId = new ObjectId(req.session.user._id); // Convert userId to ObjectId, assuming it's stored in session
+router.post("/add-contact", function (req, res) {
+  userHelper.addcontact(req.body, (id) => {
+    res.redirect("/");
+  });
+});
 
-//   const chatData = {
-//     ...req.body,
-//     tutorId,
-//     userId,
-//   };
-
-//   userHelper.addChat(chatData, (id) => {
-//     res.redirect(`/single-chat/${tutorId}`);
-//   });
-// });
 
 
 

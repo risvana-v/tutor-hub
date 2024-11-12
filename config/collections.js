@@ -9,5 +9,5 @@ module.exports = {
     CHATS_COLLECTION: "chat",
     REPLY_COLLECTION: "reply",
     FEEDBACK_COLLECTION: "feedback",
-
+    CONTACT_COLLECTION: "contact",
 }

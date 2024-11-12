@@ -14,6 +14,31 @@ var instance = new Razorpay({
 module.exports = {
 
 
+
+  addcontact: (contact, callback) => {
+    console.log(contact);
+    // contact.user = objectId(contact.user); // Convert userId to ObjectId
+
+    db.get()
+      .collection(collections.CONTACT_COLLECTION)
+      .insertOne(contact)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  removeChat: (tutorId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.CHATS_COLLECTION)
+        .removeOne({ _id: objectId(tutorId) })
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
   getProductDetails: (productId) => {
     return new Promise((resolve, reject) => {
       if (!objectId.isValid(productId)) {

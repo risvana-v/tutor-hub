@@ -304,6 +304,13 @@ router.get("/remove-all-users", verifySignedIn, function (req, res) {
   });
 });
 
+router.get("/all-contacts", verifySignedIn, function (req, res) {
+  let administator = req.session.admin;
+  adminHelper.getAllContacts().then((contacts) => {
+    res.render("admin/all-contacts", { admin: true, layout: 'admin', administator, contacts });
+  });
+});
+
 router.get("/all-orders", verifySignedIn, async function (req, res) {
   let administator = req.session.admin;
   let orders = await adminHelper.getAllOrders();

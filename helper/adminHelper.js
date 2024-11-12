@@ -6,16 +6,22 @@ const objectId = require("mongodb").ObjectID;
 module.exports = {
 
 
-  getAllFeedbacks: () => {
+  getAllFeedbacks: (tutorId) => {
     return new Promise(async (resolve, reject) => {
-      let feedbacks = await db
-        .get()
-        .collection(collections.FEEDBACK_COLLECTION)
-        .find()
-        .toArray();
-      resolve(feedbacks);
+      try {
+        let feedbacks = await db
+          .get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .find({ tutorId: objectId(tutorId) }) // Convert tutorId to ObjectId
+          .toArray();
+        resolve(feedbacks);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
+
+
 
   getAllRelies: () => {
     return new Promise(async (resolve, reject) => {
@@ -209,6 +215,17 @@ module.exports = {
         .find()
         .toArray();
       resolve(users);
+    });
+  },
+
+  getAllContacts: () => {
+    return new Promise(async (resolve, reject) => {
+      let contacts = await db
+        .get()
+        .collection(collections.CONTACT_COLLECTION)
+        .find()
+        .toArray();
+      resolve(contacts);
     });
   },
 
