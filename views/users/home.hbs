@@ -145,6 +145,7 @@
                                 <p>Class For : {{this.class}}</p>
 
                                 <p>Provided By : {{this.tutorname}}</p>
+
                                 {{!-- <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
                                     class="btn btn-sm btn-dark">Buy Now</button>
                                 --}}
@@ -158,6 +159,21 @@
                                     Details</a>
                                 {{!-- <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
                                     Now</button> --}}
+
+                                {{!-- <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                                    class="btn btn-sm btn-dark">Buy Now</button>
+                                --}}
+                                <button class="btn btn-creative btn-dark btn-lg ct-btn buy-now"
+                                    data-id="{{this._id}}">Book Now</button>
+                                {{!--
+                                <button id="add-to-cart-{{this._id}}" onclick="addToCart('{{this._id}}')"
+                                    class="btn btn-sm btn-dark">Buy Now</button> --}}
+                                <a href="/single-product/{{this._id}}"
+                                    class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
+                                    Details</a>
+                                {{!-- <button class="btn  btn-dark  btn-sm ct-btn" onclick="buyNow('{{this._id}}')">Buy
+                                    Now</button> --}}
+
 
                             </div>
                         </div>
