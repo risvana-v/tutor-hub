@@ -2,17 +2,19 @@
 
     <section>
         <div class="container my-5">
-            <h4 class="mb-4">Manage All Feedbacks and Replies</h4>
+            <h4 class="mb-4">Manage All Feedbacks</h4>
 
-            <a href="/admin/add-reply" class="btn btn-dark mb-2">Give Reply</a>
+            {{!-- <a href="/admin/add-reply" class="btn btn-dark mb-2">Give Reply</a> --}}
             <div class="row g-0">
                 <div class="col-lg-12">
                     <div class="table-responsive" style="overflow: visible;">
                         <table class="table table-bordered" id="table">
                             <thead class="table-dark">
                                 <tr class="align-middle">
-                                    {{!-- <th scope="col">Date</th> --}}
+                                    <th scope="col">Date</th>
                                     <th scope="col">User Name</th>
+                                    <th scope="col">Tutor Name</th>
+                                    <th scope="col">Subejct</th>
                                     <th scope="col">Feedback</th>
                                     {{!-- <th scope="col">Rating</th> --}}
 
@@ -22,9 +24,12 @@
                             <tbody>
                                 {{#each feedbacks}}
                                 <tr class="align-middle">
-                                    {{!-- <td>{{this.orderObject.date}}</td> --}}
+                                    <td>{{formatDate this.createdAt}}</td>
 
                                     <td>{{this.username}}</td>
+                                    <td>{{this.tutor.Tutorname}}</td>
+                                    <td>{{this.sname}}</td>
+
                                     <td>{{this.text}}</td>
                                     {{!-- <td>{{this.rating}}</td> --}}
 
@@ -37,41 +42,7 @@
                 </div>
 
             </div>
-            <br><br>
-            <h5>All Replies By Admin</h5>
-            <div class="row g-0">
-                <div class="col-lg-12">
-                    <div class="table-responsive" style="overflow: visible;">
-                        <table class="table table-bordered" id="table">
-                            <thead class="table-dark">
-                                <tr class="align-middle">
-                                    {{!-- <th scope="col">Date</th> --}}
-                                    <th scope="col">Message</th>
-                                    {{!-- <th scope="col">Rating</th> --}}
 
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {{#each Replies}}
-                                <tr class="align-middle">
-
-                                    <td>
-                                        <p> Admin Replied <span class="text-success">"{{this.reply}}"</span> To The
-                                            Feedback of
-                                            <span class="text-primary">"{{this.formsg}}"</span>
-                                        </p>
-                                    </td>
-
-
-                                </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
 
         </div>
     </section>

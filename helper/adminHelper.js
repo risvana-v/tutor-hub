@@ -21,6 +21,37 @@ module.exports = {
     });
   },
 
+  getAllFeedbacksForAdmin: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let feedbacks = await db
+          .get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .find()
+          .sort({ createdAt: -1 })
+          .toArray();
+
+        // Fetch details of each tutor associated with the feedbacks
+        let feedbacksWithTutorDetails = await Promise.all(
+          feedbacks.map(async (feedback) => {
+            let tutorDetails = await db
+              .get()
+              .collection(collections.TUTOR_COLLECTION)
+              .findOne({ _id: objectId(feedback.tutorId) });
+
+            return {
+              ...feedback,
+              tutor: tutorDetails, // Add tutor details to each feedback
+            };
+          })
+        );
+
+        resolve(feedbacksWithTutorDetails);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 
 
   getAllRelies: () => {
